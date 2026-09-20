@@ -41,7 +41,7 @@ function RevisionThinkingIndicator() {
   }, []);
 
   return (
-    <div style={{ padding: '60px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+    <div className="mode-thinking-state">
       <div className="shimmer-indicator-bubble shimmer-indicator-bubble--flashcards">
         <div className="generation-skeleton" aria-hidden="true">
           <i />
@@ -269,10 +269,10 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
   const hasSignals = diagnosis?.has_signals;
 
   return (
-    <div style={{ maxWidth: '1020px', margin: '0 auto', padding: '30px 20px' }}>
+    <div className="mode-workspace revise-workspace">
       {/* Header */}
-      <div className="glass-card" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
+      <div className="glass-card mode-hero mode-hero--revise" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+        <div className="mode-hero__copy">
           <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <RefreshCw size={22} style={{ color: '#818cf8' }} />
             Revise mode — Memory & Chat-Driven Learning
@@ -283,7 +283,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
           </p>
         </div>
 
-        <button
+        <button className="mode-schedule-button mode-schedule-button--revise"
           onClick={() => setShowScheduleModal(true)}
           style={{
             display: 'inline-flex',
@@ -307,30 +307,30 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
       {!selectedTopic ? (
         /* TOPICS DASHBOARD */
-        <div>
-          <h3 style={{ fontSize: '1.1rem', color: '#818cf8', marginBottom: '16px' }}>
+        <div className="mode-dashboard">
+          <h3 className="mode-section-title" style={{ fontSize: '1.1rem', color: '#818cf8', marginBottom: '16px' }}>
             Available Topics for Revision ({topics.length})
           </h3>
 
           {loading ? (
-            <div className="glass-card" style={{ textAlign: 'center', padding: '30px' }}>
+            <div className="glass-card mode-state-card" style={{ textAlign: 'center', padding: '30px' }}>
               <span className="skeleton-shimmer-text">Loading learner memory & topics...</span>
             </div>
           ) : topics.length === 0 ? (
-            <div className="glass-card" style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="glass-card mode-state-card mode-state-card--empty" style={{ textAlign: 'center', padding: '40px' }}>
               <p style={{ fontSize: '1.1rem', color: '#94a3b8' }}>
-                No active topics found from your Learn workspace for <strong>{studentId}</strong> yet.
+                No active topics found in <strong>{studentProfile?.name ? `${studentProfile.name}'s` : 'your'}</strong> Learn workspace yet.
               </p>
               <p style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '8px' }}>
                 Go to <strong>LEARN</strong> mode to create a chat session and start studying!
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            <div className="mode-topic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
               {topics.map((t, idx) => (
                 <div
                   key={idx}
-                  className="glass-card"
+                  className="glass-card mode-topic-card mode-topic-card--revise"
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -421,9 +421,9 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
         </div>
       ) : (
         /* REVISION TOPIC WORKSPACE & SESSIONS */
-        <div>
+        <div className="mode-detail-workspace">
           {/* Top navigation and action bar */}
-          <div
+          <div className="mode-toolbar"
             style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -447,7 +447,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button
-                className="btn-primary"
+                className="btn-primary mode-primary-action"
                 onClick={() => handleGenerateNewRevision(selectedTopic)}
                 disabled={revisionLoading}
                 style={{
@@ -466,14 +466,14 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
           {/* Local Revision Sessions Selector (Tabs / Pills) */}
           <div
-            className="glass-card"
+            className="glass-card mode-session-shelf mode-session-shelf--revise"
             style={{
               padding: '16px 18px',
               marginBottom: '24px',
               background: 'rgba(15, 23, 42, 0.65)'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <div className="mode-session-shelf__header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <History size={16} style={{ color: '#818cf8' }} />
                 <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
@@ -493,7 +493,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
                 No revision sessions saved for this topic yet. Click <strong>Generate New Revision</strong> above.
               </div>
             ) : (
-              <div
+              <div className="mode-session-rail"
                 style={{
                   display: 'flex',
                   gap: '10px',
@@ -508,7 +508,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
                   const isFailed = s.passed === false;
 
                   return (
-                    <div
+                    <div className={`mode-session-chip ${isActive ? 'is-active' : ''} ${isPassed ? 'is-passed' : ''} ${isFailed ? 'is-failed' : ''}`}
                       key={s.id}
                       onClick={() => !isActive && loadSession(s.id)}
                       style={{
@@ -591,7 +591,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
           ) : revisionData ? (
             <div>
               {/* Session Banner */}
-              <div
+              <div className="mode-session-banner"
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -622,7 +622,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
               {/* Weakness Diagnosis Report */}
               {hasSignals && diagnosis && (
-                <div
+                <div className="mode-insight-card mode-insight-card--revise"
                   style={{
                     background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8), rgba(15, 23, 42, 0.9))',
                     border: '1px solid rgba(129, 140, 248, 0.3)',
@@ -677,7 +677,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
               )}
 
               {/* Targeted Revision Text */}
-              <div className="glass-card" style={{ marginBottom: '24px' }}>
+              <div className="glass-card mode-content-card" style={{ marginBottom: '24px' }}>
                 <h3 style={{ fontSize: '1.25rem', color: '#818cf8', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <BookOpen size={20} /> Targeted Revision Lesson: {selectedTopic}
                 </h3>
@@ -688,7 +688,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
               {/* Interactive Flashcard Deck (At the end of text generation) */}
               {revisionData.flashcards && revisionData.flashcards.cards && revisionData.flashcards.cards.length > 0 && (
-                <div className="glass-card" style={{ marginBottom: '28px' }}>
+                <div className="glass-card mode-content-card mode-content-card--flashcards" style={{ marginBottom: '28px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                     <Layers size={20} style={{ color: '#a78bfa' }} />
                     <h3 style={{ fontSize: '1.15rem', color: '#a78bfa', margin: 0 }}>
@@ -706,7 +706,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
 
               {/* 2-Question Revision Verification Quiz */}
               {revisionData.questions && revisionData.questions.length > 0 && (
-                <div className="glass-card">
+                <div className="glass-card mode-verification-card">
                   <h4 style={{ fontSize: '1.15rem', color: '#f8fafc', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <HelpCircle size={18} style={{ color: '#38bdf8' }} />
                     Mastery Verification Quiz ({revisionData.questions.length} questions)
@@ -721,7 +721,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
                     const isSubmitted = Boolean(verifyResult);
 
                     return (
-                      <div
+                      <div className="mode-question-block"
                         key={qId}
                         style={{
                           background: 'rgba(30, 41, 59, 0.6)',
@@ -735,7 +735,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {q.options.map((opt, optIdx) => (
-                            <label
+                            <label className={`mode-answer-option ${selectedAnswer === opt ? 'is-selected' : ''}`}
                               key={optIdx}
                               style={{
                                 display: 'flex',
@@ -809,7 +809,7 @@ export default function Revise({ studentId, studentProfile, onRefreshProfile }) 
               )}
             </div>
           ) : (
-            <div className="glass-card" style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="glass-card mode-state-card mode-state-card--empty" style={{ textAlign: 'center', padding: '40px' }}>
               <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
                 Click <strong>Generate New Revision</strong> to create a personalized revision session.
               </p>

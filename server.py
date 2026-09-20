@@ -5,7 +5,7 @@ import logging
 import json
 import time
 from typing import Dict, Any, List, Optional
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, status
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, FileResponse
@@ -22,6 +22,9 @@ from backend.memory.revision_memory import RevisionMemory
 from backend.memory.test_memory import TestMemory
 from backend.memory.schedule_memory import ScheduleMemory
 from backend.memory.progress_memory import ProgressMemory
+from backend.auth.store import AuthStore
+from backend.auth.user_services import ServiceProxy, current_account, current_account_id, current_services, services_for
+from backend.admin.analytics import build_admin_overview, build_student_snapshot
 from backend.services.email_service import send_study_reminder
 from backend.media.lesson_media import normalize_flashcards, normalize_storyboard, parse_json_response, render_animated_lesson
 from backend.learning.preferences import build_learn_preference_prompt
@@ -48,11 +51,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Core Services
-learner_memory = LearnerMemory()
-chat_memory = ChatMemory()
-syllabus_memory = SyllabusMemory()
-revision_memory = RevisionMemory()
+# Initialize Core Services. Proxies resolve to the authenticated account's local database.
+auth_store = AuthStore()
+learner_memory = ServiceProxy("learner_memory")
+chat_memory = ServiceProxy("chat_memory")
+syllabus_memory = ServiceProxy("syllabus_memory")
+revision_memory = ServiceProxy("revision_memory")
 from openai import OpenAI
 
 
@@ -97,7 +101,7 @@ def get_llm():
     api_key = os.getenv("NVIDIA_API_KEY") or os.getenv("OPENAI_API_KEY", "mock-key")
     model_name = os.getenv("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
     base_url = "https://integrate.api.nvidia.com/v1" if os.getenv("NVIDIA_API_KEY") else None
-    
+
     client = OpenAI(base_url=base_url, api_key=api_key, max_retries=1, timeout=60.0)
     return LLMWrapper(client, model_name)
 
@@ -109,18 +113,35 @@ remediation_agent = RemediationAgent(llm)
 verification_agent = VerificationAgent(llm)
 revision_agent = RevisionAgent(llm, diagnostic_agent=diagnostic_agent)
 test_agent = TestAgent(llm)
-test_memory = TestMemory()
-schedule_memory = ScheduleMemory()
-progress_memory = ProgressMemory()
+test_memory = ServiceProxy("test_memory")
+schedule_memory = ServiceProxy("schedule_memory")
+progress_memory = ServiceProxy("progress_memory")
 workflow = create_workflow(llm, learner_memory)
 
 # UPLOAD DIR & STATIC DIR
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "backend", "data", "uploads")
-MEDIA_DIR = os.path.join(os.path.dirname(__file__), "backend", "data", "generated")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(MEDIA_DIR, exist_ok=True)
 os.makedirs(STATIC_DIR, exist_ok=True)
+
+
+@app.middleware("http")
+async def authenticated_user_scope(request: Request, call_next):
+    path = request.url.path
+    public_paths = {"/api/health", "/api/auth/register", "/api/auth/login"}
+    requires_auth = path.startswith("/api/") and path not in public_paths and request.method != "OPTIONS"
+    account = None
+    if requires_auth:
+        session_token = request.cookies.get("edunexus_session")
+        authorization = request.headers.get("Authorization", "")
+        if not session_token and authorization.lower().startswith("bearer "):
+            session_token = authorization[7:].strip()
+        account = auth_store.account_for_token(session_token or "")
+        if not account:
+            return JSONResponse(status_code=401, content={"detail": "Authentication required."})
+    token = current_account.set(account)
+    try:
+        return await call_next(request)
+    finally:
+        current_account.reset(token)
 
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -145,6 +166,26 @@ class LearnPreferences(BaseModel):
     flashcard_style: str = "auto"
     flashcard_content: str = "auto"
     flashcard_custom_instruction: str = ""
+
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: str = ""
+    level: str = "College"
+    study: str = ""
+    year_of_study: str = ""
+    learning_goal: str = ""
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class ProfileUpdateRequest(BaseModel):
+    profile: Dict[str, Any]
 
 
 class LearnChatRequest(BaseModel):
@@ -252,13 +293,112 @@ def generate_safe_visualization(topic: str, text: str = "") -> Optional[Dict[str
 def health():
     return {"status": "ok", "app": "EDUNEXUS Mastery Engine"}
 
+
+def _authenticated_response(account: Dict[str, Any], session_token: str, status_code: int = 200):
+    response = JSONResponse(status_code=status_code, content={"account": account})
+    response.set_cookie(
+        "edunexus_session",
+        session_token,
+        max_age=30 * 24 * 60 * 60,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        path="/",
+    )
+    return response
+
+
+@app.post("/api/auth/register", status_code=status.HTTP_201_CREATED)
+def register_account(req: RegisterRequest):
+    profile = {
+        "name": req.name,
+        "email": req.email,
+        "level": req.level,
+        "study": req.study,
+        "yearOfStudy": req.year_of_study,
+        "learningGoal": req.learning_goal,
+        "theme": "nexus",
+        "pomodoro": {"enabled": True, "studyTime": 25, "breakTime": 5},
+        "hydration": {"enabled": True, "interval": 45},
+    }
+    try:
+        account = auth_store.create_account(req.username, req.password, profile)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    # Materialize the account's isolated SQLite database without loading the embedding model.
+    services = services_for(account["id"])
+    services.learner_memory.create_student(account["id"])
+    services.chat_memory
+    services.revision_memory
+    services.test_memory
+    services.schedule_memory
+    services.progress_memory
+    session_token = auth_store.create_session(account["id"])
+    return _authenticated_response(account, session_token, status.HTTP_201_CREATED)
+
+
+@app.post("/api/auth/login")
+def login_account(req: LoginRequest):
+    account = auth_store.verify_credentials(req.username, req.password)
+    if not account:
+        raise HTTPException(status_code=401, detail="Invalid username or password.")
+    return _authenticated_response(account, auth_store.create_session(account["id"]))
+
+
+@app.get("/api/auth/me")
+def authenticated_account():
+    account = current_account.get()
+    if not account:
+        raise HTTPException(status_code=401, detail="Authentication required.")
+    return {"account": account}
+
+
+@app.put("/api/auth/profile")
+def update_authenticated_profile(req: ProfileUpdateRequest):
+    try:
+        account = auth_store.update_profile(current_account_id(), req.profile)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"account": account}
+
+
+@app.post("/api/auth/logout")
+def logout_account(request: Request):
+    auth_store.delete_session(request.cookies.get("edunexus_session", ""))
+    response = JSONResponse(content={"status": "success"})
+    response.delete_cookie("edunexus_session", path="/")
+    return response
+
+
+def _require_admin() -> Dict[str, Any]:
+    account = current_account.get()
+    if not account or account.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Administrator access required.")
+    return account
+
+
+@app.get("/api/admin/overview")
+def get_admin_overview():
+    _require_admin()
+    return build_admin_overview(auth_store.list_accounts(role="student"), services_for)
+
+
+@app.get("/api/admin/students/{account_id}")
+def get_admin_student(account_id: str):
+    _require_admin()
+    account = auth_store.get_account(account_id)
+    if not account or account.get("role") != "student":
+        raise HTTPException(status_code=404, detail="Student not found.")
+    return build_student_snapshot(account, services_for(account_id))
+
 @app.get("/api/learner/{student_id}")
 def get_learner_profile(student_id: str):
-    return learner_memory.get_learner_summary(student_id)
+    return learner_memory.get_learner_summary(current_account_id())
 
 @app.get("/api/learn/sessions/{student_id}")
 def list_chat_sessions(student_id: str):
-    return {"sessions": chat_memory.list_sessions(student_id)}
+    return {"sessions": chat_memory.list_sessions(current_account_id())}
 
 @app.post("/api/learn/sessions", status_code=status.HTTP_201_CREATED)
 def create_chat_session(req: CreateChatSessionRequest):
@@ -268,8 +408,9 @@ def create_chat_session(req: CreateChatSessionRequest):
         raise HTTPException(status_code=400, detail="A lesson title is required.")
     if not description:
         raise HTTPException(status_code=400, detail="A short lesson description is required.")
-    learner_memory.create_student(req.student_id)
-    return chat_memory.create_session(req.student_id, title[:120], description[:500])
+    student_id = current_account_id()
+    learner_memory.create_student(student_id)
+    return chat_memory.create_session(student_id, title[:120], description[:500])
 
 @app.get("/api/learn/session/{session_id}")
 def get_chat_session(session_id: str):
@@ -327,7 +468,7 @@ async def upload_session_document(session_id: str, file: UploadFile = File(...))
         raise HTTPException(status_code=413, detail="Files must be 20 MB or smaller.")
 
     stored_name = f"{session_id}_{uuid.uuid4().hex[:8]}_{display_name}"
-    file_path = os.path.join(UPLOAD_DIR, stored_name)
+    file_path = os.path.join(current_services().upload_dir, stored_name)
     with open(file_path, "wb") as destination:
         destination.write(content)
 
@@ -367,7 +508,7 @@ def get_generated_lesson_media(filename: str):
     safe_name = os.path.basename(filename)
     if safe_name != filename or not safe_name.endswith((".mp4", ".gif")):
         raise HTTPException(status_code=400, detail="Invalid media filename.")
-    media_path = os.path.join(MEDIA_DIR, safe_name)
+    media_path = os.path.join(current_services().media_dir, safe_name)
     if not os.path.isfile(media_path):
         raise HTTPException(status_code=404, detail="Generated media not found.")
     media_type = "video/mp4" if safe_name.endswith(".mp4") else "image/gif"
@@ -378,7 +519,7 @@ async def upload_document(file: UploadFile = File(...)):
     if not (file.filename.endswith(".pdf") or file.filename.endswith(".txt")):
         raise HTTPException(status_code=400, detail="Only PDF and TXT files are supported.")
     
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    file_path = os.path.join(current_services().upload_dir, os.path.basename(file.filename))
     with open(file_path, "wb") as f:
         content = await file.read()
         f.write(content)
@@ -406,6 +547,7 @@ async def upload_document(file: UploadFile = File(...)):
 
 @app.post("/api/learn/chat")
 async def learn_chat(req: LearnChatRequest):
+    req.student_id = current_account_id()
     learner_memory.create_student(req.student_id)
 
     session = None
@@ -552,7 +694,7 @@ async def learn_chat(req: LearnChatRequest):
         preferred_engine = req.preferences.animation_engine.lower().strip() if req.preferences else "auto"
         if preferred_engine in {"manim", "motion_graphics"}:
             storyboard["render_style"] = preferred_engine
-        content_data = render_animated_lesson(storyboard, MEDIA_DIR)
+        content_data = render_animated_lesson(storyboard, current_services().media_dir)
         answer_text = f"Animated lesson: {content_data['title']}"
     else:
         prompt = knowledge_prompt + preference_prompt + formatting_rules
@@ -595,6 +737,7 @@ async def learn_chat(req: LearnChatRequest):
 
 @app.post("/api/learn/save_event")
 def save_learning_event(req: SaveEventRequest):
+    req.student_id = current_account_id()
     result = learner_memory.save_learning_event(
         student_id=req.student_id,
         topic=req.topic,
@@ -666,6 +809,7 @@ async def check_understanding(req: CheckUnderstandingRequest):
 
 @app.get("/api/revise/topics/{student_id}")
 def get_revision_topics(student_id: str):
+    student_id = current_account_id()
     active_sessions = chat_memory.list_sessions(student_id)
     
     if active_sessions:
@@ -714,7 +858,7 @@ def get_revision_topics(student_id: str):
 
 @app.get("/api/revise/sessions/{student_id}/{topic}")
 def get_topic_revision_sessions(student_id: str, topic: str):
-    return revision_memory.list_sessions(student_id, topic)
+    return revision_memory.list_sessions(current_account_id(), topic)
 
 @app.get("/api/revise/session/{session_id}")
 def get_revision_session_by_id(session_id: str):
@@ -732,6 +876,7 @@ def delete_revision_session_by_id(session_id: str):
 
 @app.post("/api/revise/start")
 async def start_revision(req: ReviseStartRequest):
+    req.student_id = current_account_id()
     # Fetch chat messages for this student and topic
     chat_messages = chat_memory.get_messages_for_topic(req.student_id, req.topic)
     
@@ -765,6 +910,7 @@ async def start_revision(req: ReviseStartRequest):
 
 @app.post("/api/revise/verify")
 async def verify_revision(req: ReviseVerifyRequest):
+    req.student_id = current_account_id()
     score = 0.0
     total = len(req.questions)
     results = []
@@ -851,6 +997,7 @@ async def verify_revision(req: ReviseVerifyRequest):
 
 @app.post("/api/test/start")
 async def start_test(req: TestStartRequest):
+    req.student_id = current_account_id()
     learner_memory.create_student(req.student_id)
     count = max(5, min(25, req.question_count or 5))
 
@@ -926,6 +1073,7 @@ async def start_test(req: TestStartRequest):
 
 @app.post("/api/test/submit")
 async def submit_test(req: TestSubmitRequest):
+    req.student_id = current_account_id()
     score = 0.0
     total = len(req.questions)
     results = []
@@ -1026,6 +1174,7 @@ async def submit_test(req: TestSubmitRequest):
 
 @app.post("/api/test/review")
 async def review_test_remediation(req: TestReviewRequest):
+    req.student_id = current_account_id()
     review_data = test_agent.generate_remediation_review(
         topic=req.topic,
         failed_results=req.failed_results,
@@ -1051,7 +1200,7 @@ def get_student_test_sessions(
     topic: Optional[str] = None,
     subsection: Optional[str] = None
 ):
-    return test_memory.list_sessions(student_id, topic=topic, subsection=subsection)
+    return test_memory.list_sessions(current_account_id(), topic=topic, subsection=subsection)
 
 @app.get("/api/test/session/{session_id}")
 def get_test_session_details(session_id: str):
@@ -1072,6 +1221,7 @@ def delete_test_session(session_id: str):
 # -------------------------------------------------------------------
 @app.post("/api/schedule/create")
 def create_study_schedule(req: ScheduleCreateRequest):
+    req.student_id = current_account_id()
     schedule = schedule_memory.create_schedule(
         student_id=req.student_id,
         topic=req.topic,
@@ -1106,7 +1256,7 @@ def list_study_schedules(
     mode: Optional[str] = None,
     topic: Optional[str] = None
 ):
-    return schedule_memory.list_schedules(student_id, mode=mode, topic=topic)
+    return schedule_memory.list_schedules(current_account_id(), mode=mode, topic=topic)
 
 @app.delete("/api/schedule/{schedule_id}")
 def delete_study_schedule(schedule_id: str):
@@ -1474,6 +1624,7 @@ def _generate_student_report_data(student_id: str) -> Dict[str, Any]:
 
 @app.get("/api/progress/latest/{student_id}")
 def get_latest_progress_report(student_id: str):
+    student_id = current_account_id()
     latest = progress_memory.get_latest_report(student_id)
     if latest:
         return {"has_report": True, "report": latest}
@@ -1481,12 +1632,14 @@ def get_latest_progress_report(student_id: str):
 
 @app.post("/api/progress/generate/{student_id}")
 def generate_latest_progress_report(student_id: str):
+    student_id = current_account_id()
     report_data = _generate_student_report_data(student_id)
     saved = progress_memory.save_report(student_id, report_data)
     return {"has_report": True, "report": saved}
 
 @app.get("/api/progress/summary/{student_id}")
 def get_student_progress_summary(student_id: str):
+    student_id = current_account_id()
     # Check if latest report already exists
     latest = progress_memory.get_latest_report(student_id)
     if latest:

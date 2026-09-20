@@ -53,7 +53,7 @@ function TestThinkingIndicator({ topic, questionCount }) {
   }, []);
 
   return (
-    <div style={{ padding: '50px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+    <div className="mode-thinking-state">
       <div className="shimmer-indicator-bubble shimmer-indicator-bubble--flashcards">
         <div className="generation-skeleton" aria-hidden="true">
           <i />
@@ -479,10 +479,10 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
   };
 
   return (
-    <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '30px 20px' }}>
+    <div className="mode-workspace test-workspace">
       {/* Header */}
-      <div className="glass-card" style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="glass-card mode-hero mode-hero--test" style={{ marginBottom: '24px' }}>
+        <h2 className="mode-hero__title" style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <HelpCircle size={22} style={{ color: '#c084fc' }} />
           Test mode — Adaptive Mastery Engine
         </h2>
@@ -491,9 +491,9 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
         </p>
 
         {/* 2 Subsections Navigation Tabs & Schedule Button */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '18px', borderTop: '1px solid rgba(148, 163, 184, 0.15)', paddingTop: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="test-mode-tabs" style={{ display: 'flex', gap: '10px', marginTop: '18px', borderTop: '1px solid rgba(148, 163, 184, 0.15)', paddingTop: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           <button
-            className={`btn-secondary ${activeTab === 'studied_concept' ? 'gradient-text' : ''}`}
+            className={`btn-secondary test-mode-tab ${activeTab === 'studied_concept' ? 'is-active' : ''}`}
             onClick={() => {
               setActiveTab('studied_concept');
               setQuizData(null);
@@ -513,7 +513,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           </button>
 
           <button
-            className={`btn-secondary ${activeTab === 'uploaded_file' ? 'gradient-text' : ''}`}
+            className={`btn-secondary test-mode-tab ${activeTab === 'uploaded_file' ? 'is-active' : ''}`}
             onClick={() => {
               setActiveTab('uploaded_file');
               setQuizData(null);
@@ -532,7 +532,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
             2. Upload File to Test on Any Concept
           </button>
 
-          <button
+          <button className="mode-schedule-button mode-schedule-button--test"
             onClick={() => setShowScheduleModal(true)}
             style={{
               marginLeft: 'auto',
@@ -557,7 +557,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
       {/* QUESTION COUNT SELECTOR (Min: 5, Max: 25) */}
       {!quizData && (
-        <div className="glass-card" style={{ marginBottom: '24px', padding: '18px 22px', background: 'rgba(15, 23, 42, 0.75)' }}>
+        <div className="glass-card assessment-config" style={{ marginBottom: '24px', padding: '18px 22px', background: 'rgba(15, 23, 42, 0.75)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <span style={{ fontSize: '0.92rem', fontWeight: 650, color: '#f8fafc', display: 'block' }}>
@@ -573,6 +573,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
                 <button
                   key={cnt}
                   type="button"
+                  className={`question-count-pill ${questionCount === cnt ? 'is-active' : ''}`}
                   onClick={() => setQuestionCount(cnt)}
                   style={{
                     padding: '6px 12px',
@@ -592,6 +593,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
               <input
                 type="number"
+                className="question-count-input"
                 min="5"
                 max="25"
                 value={questionCount}
@@ -615,7 +617,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
       {/* SAVED TEST SESSIONS DRAWER / SHELF */}
       {!quizData && allSavedSessions.length > 0 && (
-        <div className="glass-card" style={{ marginBottom: '26px', background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(192, 132, 252, 0.3)' }}>
+        <div className="glass-card mode-session-shelf mode-session-shelf--test" style={{ marginBottom: '26px', background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(192, 132, 252, 0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <History size={18} style={{ color: '#c084fc' }} />
@@ -628,11 +630,11 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
             </span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+          <div className="saved-test-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
             {allSavedSessions.map((s) => {
               const isCompleted = s.status === 'COMPLETED' || s.score !== null;
               return (
-                <div
+                <div className="saved-test-card"
                   key={s.id}
                   onClick={() => handleOpenSavedSession(s)}
                   style={{
@@ -723,25 +725,25 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           {/* SUBSECTION A: TEST ON STUDIED CONCEPT */}
           {activeTab === 'studied_concept' && (
             <div>
-              <h3 style={{ fontSize: '1.1rem', color: '#c084fc', marginBottom: '16px' }}>
+              <h3 className="mode-section-title" style={{ fontSize: '1.1rem', color: '#c084fc', marginBottom: '16px' }}>
                 Select a Studied Concept from Learn ({topics.length})
               </h3>
 
               {loadingTopics ? (
-                <div className="glass-card" style={{ textAlign: 'center', padding: '30px' }}>
+                <div className="glass-card mode-state-card" style={{ textAlign: 'center', padding: '30px' }}>
                   <span className="skeleton-shimmer-text">Loading studied concepts from memory...</span>
                 </div>
               ) : topics.length === 0 ? (
-                <div className="glass-card" style={{ textAlign: 'center', padding: '40px' }}>
+                <div className="glass-card mode-state-card mode-state-card--empty" style={{ textAlign: 'center', padding: '40px' }}>
                   <p style={{ fontSize: '1rem', color: '#94a3b8' }}>
-                    No active studied concepts found for <strong>{studentId}</strong> yet.
+                    No active studied concepts found in <strong>{studentProfile?.name ? `${studentProfile.name}'s` : 'your'}</strong> Learn workspace yet.
                   </p>
                   <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '8px' }}>
                     Go to <strong>LEARN</strong> to start a lesson or upload notes!
                   </p>
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                <div className="mode-topic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                   {topics.map((t, idx) => {
                     const topicSessions = allSavedSessions.filter(
                       (s) => s.topic?.toLowerCase().trim() === t.topic?.toLowerCase().trim()
@@ -750,7 +752,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
                     return (
                       <div
                         key={idx}
-                        className="glass-card"
+                        className="glass-card mode-topic-card mode-topic-card--test"
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
@@ -848,7 +850,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           {/* SUBSECTION B: UPLOAD FILE TO TEST ON ANY CONCEPT */}
           {activeTab === 'uploaded_file' && (
             <div>
-              <div className="glass-card" style={{ marginBottom: '24px' }}>
+              <div className="glass-card test-upload-card" style={{ marginBottom: '24px' }}>
                 <h3 style={{ fontSize: '1.15rem', color: '#c084fc', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <FileText size={18} /> Upload Document to Test Concept
                 </h3>
@@ -929,7 +931,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
           {/* SAVED TEST SESSIONS SECTION FOR ACTIVE TOPIC/DOCUMENT */}
           {savedSessions.length > 0 && (
-            <div className="glass-card" style={{ marginTop: '30px' }}>
+            <div className="glass-card mode-session-shelf mode-session-shelf--test" style={{ marginTop: '30px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <History size={18} style={{ color: '#c084fc' }} />
                 <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
@@ -1013,9 +1015,9 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
       {/* ACTIVE QUIZ EXECUTION RUNNER */}
       {quizData && !submitResult && !loadingQuiz && (
-        <div>
+        <div className="active-test-runner">
           {/* Top Bar: Back, Quiz Title, Live Timer */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+          <div className="active-test-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
             <button
               className="btn-secondary"
               onClick={() => {
@@ -1030,7 +1032,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div
+              <div className="test-live-timer"
                 style={{
                   background: 'rgba(30, 41, 59, 0.8)',
                   padding: '6px 14px',
@@ -1054,7 +1056,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           </div>
 
           {/* Question Index Progress Pills */}
-          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', marginBottom: '20px', paddingBottom: '6px' }}>
+          <div className="question-progress-rail" style={{ display: 'flex', gap: '6px', overflowX: 'auto', marginBottom: '20px', paddingBottom: '6px' }}>
             {quizData.questions.map((q, idx) => {
               const isAnswered = Boolean(answers[q.id]);
               const isCurrent = idx === currentQIndex;
@@ -1062,6 +1064,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
                 <button
                   key={q.id || idx}
                   type="button"
+                  className={`question-progress-pill ${isCurrent ? 'is-current' : ''} ${isAnswered ? 'is-answered' : ''}`}
                   onClick={() => handleSelectQuestion(idx)}
                   style={{
                     width: '36px',
@@ -1097,7 +1100,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
             const selectedOpt = answers[qId] || '';
 
             return (
-              <div className="glass-card" style={{ padding: '26px', marginBottom: '20px' }}>
+              <div className="glass-card active-question-card" style={{ padding: '26px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                   <span style={{ fontSize: '0.8rem', color: '#c084fc', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                     Concept: {q.sub_concept}
@@ -1115,7 +1118,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
                   {q.options.map((opt, optIdx) => {
                     const isChecked = selectedOpt === opt;
                     return (
-                      <label
+                      <label className={`test-answer-option ${isChecked ? 'is-selected' : ''}`}
                         key={optIdx}
                         onClick={() => setAnswers((prev) => ({ ...prev, [qId]: opt }))}
                         style={{
@@ -1185,7 +1188,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
       {/* TEST SUBMISSION RESULTS & ADAPTIVE REMEDIATION LOOP */}
       {submitResult && (
-        <div>
+        <div className="test-results-workspace">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
             <button
               className="btn-secondary"
@@ -1212,7 +1215,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           </div>
 
           {/* 1. Score, Marks, and Timing Analysis Card */}
-          <div className="glass-card" style={{ marginBottom: '24px' }}>
+          <div className="glass-card test-score-card" style={{ marginBottom: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
               <div>
                 <span className={`badge ${submitResult.passed ? 'badge-mastered' : 'badge-revision'}`} style={{ fontSize: '1rem', padding: '6px 14px', marginBottom: '8px', display: 'inline-block' }}>
@@ -1257,7 +1260,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           {/* STEP A: Ask user if they want to revise and make concept strong */}
           {loopStep === 'ask_revise' && (
             <div
-              className="glass-card"
+              className="glass-card remediation-card"
               style={{
                 marginBottom: '28px',
                 padding: '24px',
@@ -1299,7 +1302,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           {/* STEP B: Ask user whether they want Text Concept or Flashcards */}
           {loopStep === 'choose_format' && (
             <div
-              className="glass-card"
+              className="glass-card remediation-card"
               style={{
                 marginBottom: '28px',
                 padding: '24px',
@@ -1376,7 +1379,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           {loopStep === 'view_remediation' && reviewData && (
             <div style={{ marginBottom: '28px' }}>
               {reviewMode === 'text' ? (
-                <div className="glass-card" style={{ marginBottom: '20px' }}>
+                <div className="glass-card mode-content-card" style={{ marginBottom: '20px' }}>
                   <h4 style={{ fontSize: '1.2rem', color: '#818cf8', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <BookOpen size={20} /> Targeted Concept Remediation
                   </h4>
@@ -1385,7 +1388,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
                   </div>
                 </div>
               ) : (
-                <div className="glass-card" style={{ marginBottom: '20px' }}>
+                <div className="glass-card mode-content-card mode-content-card--flashcards" style={{ marginBottom: '20px' }}>
                   <h4 style={{ fontSize: '1.2rem', color: '#c084fc', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Layers size={20} /> Test Remediation Flashcards
                   </h4>
@@ -1397,7 +1400,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
 
               {/* STEP D: Ask user if ready for another quiz (Loop continuation) */}
               <div
-                className="glass-card"
+                className="glass-card remediation-card remediation-card--success"
                 style={{
                   padding: '22px',
                   background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.9))',
@@ -1433,7 +1436,7 @@ export default function Test({ studentId, studentProfile, onRefreshProfile }) {
           )}
 
           {/* 3. Detailed Question-by-Question Review */}
-          <div className="glass-card">
+          <div className="glass-card detailed-results-card">
             <h4 style={{ fontSize: '1.15rem', color: '#f8fafc', marginBottom: '16px' }}>
               Detailed Question Review & Explanations ({submitResult.results.length} questions)
             </h4>

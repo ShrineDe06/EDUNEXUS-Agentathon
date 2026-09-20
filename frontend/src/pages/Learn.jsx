@@ -32,9 +32,11 @@ const DEFAULT_LEARN_SETTINGS = {
   flashcard_custom_instruction: '',
 };
 
-const loadLearnSettings = () => {
+const learnSettingsKey = (studentId) => `edunexus:learn-settings:${studentId || 'default'}`;
+
+const loadLearnSettings = (studentId) => {
   try {
-    const saved = JSON.parse(localStorage.getItem('edunexus:learn-settings') || '{}');
+    const saved = JSON.parse(localStorage.getItem(learnSettingsKey(studentId)) || '{}');
     return { ...DEFAULT_LEARN_SETTINGS, ...saved };
   } catch {
     return { ...DEFAULT_LEARN_SETTINGS };
@@ -315,8 +317,8 @@ export default function Learn({ studentId, onRefreshProfile }) {
   const [creating, setCreating] = useState(false);
   const [inputMsg, setInputMsg] = useState('');
   const [responseMode, setResponseMode] = useState('text');
-  const [learnSettings, setLearnSettings] = useState(loadLearnSettings);
-  const [settingsDraft, setSettingsDraft] = useState(loadLearnSettings);
+  const [learnSettings, setLearnSettings] = useState(() => loadLearnSettings(studentId));
+  const [settingsDraft, setSettingsDraft] = useState(() => loadLearnSettings(studentId));
   const [showSettings, setShowSettings] = useState(false);
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -336,7 +338,7 @@ export default function Learn({ studentId, onRefreshProfile }) {
 
   const saveSettings = () => {
     setLearnSettings(settingsDraft);
-    localStorage.setItem('edunexus:learn-settings', JSON.stringify(settingsDraft));
+    localStorage.setItem(learnSettingsKey(studentId), JSON.stringify(settingsDraft));
     setShowSettings(false);
   };
 
@@ -409,7 +411,12 @@ export default function Learn({ studentId, onRefreshProfile }) {
     }
   };
 
-  useEffect(() => { loadSessions(); }, [studentId]);
+  useEffect(() => {
+    const storedSettings = loadLearnSettings(studentId);
+    setLearnSettings(storedSettings);
+    setSettingsDraft(storedSettings);
+    loadSessions();
+  }, [studentId]);
   useEffect(() => { messageEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [activeSession?.messages, sending]);
 
   const createSession = async (event) => {

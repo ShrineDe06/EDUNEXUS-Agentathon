@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { User, Mail, GraduationCap, Calendar, Clock, Droplets, X, Save, AlertCircle, Sparkles } from 'lucide-react';
+import { User, Mail, GraduationCap, Calendar, Clock, Droplets, Palette, X, Save, AlertCircle, CheckCircle2, Sparkles } from 'lucide-react';
+
+const THEMES = [
+  { id: 'nexus', name: 'Nexus', description: 'Teal and blue', colors: ['#2dd4bf', '#60a5fa', '#07101d'] },
+  { id: 'ocean', name: 'Ocean', description: 'Aqua and cobalt', colors: ['#22d3ee', '#3b82f6', '#061525'] },
+  { id: 'violet', name: 'Violet', description: 'Purple and orchid', colors: ['#a78bfa', '#e879f9', '#110d22'] },
+  { id: 'ember', name: 'Ember', description: 'Amber and coral', colors: ['#f59e0b', '#fb7185', '#1a0e12'] },
+];
 
 export default function ProfileModal({ isOpen, onClose, studentProfile, onSaveProfile }) {
-  if (!isOpen) return null;
-
   const [formData, setFormData] = useState({
     name: studentProfile?.name || '',
     email: studentProfile?.email || '',
     level: studentProfile?.level || 'College',
     study: studentProfile?.study || '',
     yearOfStudy: studentProfile?.yearOfStudy || '2nd Year',
+    learningGoal: studentProfile?.learningGoal || '',
+    theme: studentProfile?.theme || 'nexus',
     pomodoro: {
       enabled: studentProfile?.pomodoro?.enabled ?? true,
       studyTime: studentProfile?.pomodoro?.studyTime || 25,
@@ -23,6 +30,8 @@ export default function ProfileModal({ isOpen, onClose, studentProfile, onSavePr
 
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  if (!isOpen) return null;
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -66,7 +75,7 @@ export default function ProfileModal({ isOpen, onClose, studentProfile, onSavePr
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       setErrorMsg('Please enter student name.');
@@ -81,12 +90,16 @@ export default function ProfileModal({ isOpen, onClose, studentProfile, onSavePr
       }
     }
 
-    onSaveProfile(formData);
-    setSuccessMsg('Profile and personal preferences saved successfully!');
-    setTimeout(() => {
-      setSuccessMsg('');
-      onClose();
-    }, 900);
+    try {
+      await onSaveProfile(formData);
+      setSuccessMsg('Profile and personal preferences saved successfully!');
+      setTimeout(() => {
+        setSuccessMsg('');
+        onClose();
+      }, 900);
+    } catch (error) {
+      setErrorMsg(error.message || 'Could not save profile.');
+    }
   };
 
   return (
@@ -343,8 +356,21 @@ export default function ProfileModal({ isOpen, onClose, studentProfile, onSavePr
                 <Clock size={16} /> Personalisation & Wellness
               </div>
               <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Active in Learn & Revise only
+                Saved to your profile
               </span>
+            </div>
+
+            <div className="profile-theme-setting">
+              <div className="profile-theme-setting__heading"><span><Palette size={15} /> Workspace theme</span><small>Applied after saving</small></div>
+              <div className="profile-theme-grid" role="radiogroup" aria-label="Workspace theme">
+                {THEMES.map((theme) => (
+                  <button key={theme.id} type="button" role="radio" aria-checked={formData.theme === theme.id} className={`profile-theme-option ${formData.theme === theme.id ? 'is-active' : ''}`} onClick={() => handleChange('theme', theme.id)}>
+                    <span className="profile-theme-swatches" aria-hidden="true">{theme.colors.map((color) => <i key={color} style={{ background: color }} />)}</span>
+                    <span><strong>{theme.name}</strong><small>{theme.description}</small></span>
+                    {formData.theme === theme.id && <CheckCircle2 size={15} />}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Pomodoro settings */}

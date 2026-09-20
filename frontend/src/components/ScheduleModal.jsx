@@ -127,7 +127,7 @@ export default function ScheduleModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           student_id: studentId,
-          student_name: studentProfile?.name || studentId,
+          student_name: studentProfile?.name || 'Student',
           topic: topic.trim(),
           mode: mode,
           date: date,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, CheckCircle2, GraduationCap, Home, RefreshCw, Sparkles, TrendingUp, User } from 'lucide-react';
+import { BookOpen, CheckCircle2, GraduationCap, Home, LogOut, RefreshCw, Sparkles, TrendingUp, User } from 'lucide-react';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Overview', icon: Home },
@@ -12,11 +12,11 @@ const NAV_ITEMS = [
 export default function Navbar({
   currentMode,
   setMode,
-  studentId,
-  setStudentId,
   learnerSummary,
   studentProfile,
+  username,
   onOpenProfile,
+  onLogout,
 }) {
   return (
     <header className="site-header">
@@ -48,6 +48,7 @@ export default function Navbar({
           )}
           
           <button
+            className="account-profile-button"
             onClick={onOpenProfile}
             title={studentProfile?.name ? `Student Profile: ${studentProfile.name}` : 'Setup Student Profile'}
             style={{
@@ -67,11 +68,11 @@ export default function Navbar({
             }}
           >
             <User size={15} color="#2dd4bf" />
-            <span>{studentProfile?.name ? studentProfile.name : 'Setup Profile'}</span>
+            <span><strong>{studentProfile?.name || username}</strong><small>@{username}</small></span>
           </button>
+          <button className="nav-logout-button" onClick={onLogout} title="Sign out" aria-label="Sign out"><LogOut size={16} /></button>
         </div>
       </nav>
     </header>
   );
 }
-

@@ -223,5 +223,3 @@ class DiagnosticAndDiagnosisAgent:
 DiagnosticAgent = DiagnosticAndDiagnosisAgent
 DiagnosisAgent = DiagnosticAndDiagnosisAgent
 
-
-

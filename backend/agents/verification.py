@@ -122,4 +122,3 @@ class VerificationAgent:
             raise ValueError(f"LLM output does not match the required schema: {e}\nContent was: {content}")
         except Exception as e:
             raise RuntimeError(f"An unexpected error occurred while parsing output: {e}")
-

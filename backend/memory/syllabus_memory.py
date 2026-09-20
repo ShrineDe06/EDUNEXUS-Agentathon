@@ -5,6 +5,7 @@ import fitz  # PyMuPDF
 from sentence_transformers import SentenceTransformer
 
 class SyllabusMemory:
+    _model_cache = {}
     def __init__(
         self, 
         persist_dir="backend/data/syllabus", 
@@ -23,7 +24,9 @@ class SyllabusMemory:
         os.makedirs(self.persist_dir, exist_ok=True)
         
         # Load lightweight sentence transformer
-        self.model = SentenceTransformer(model_name)
+        if model_name not in self._model_cache:
+            self._model_cache[model_name] = SentenceTransformer(model_name)
+        self.model = self._model_cache[model_name]
         self.embedding_dim = self.model.get_sentence_embedding_dimension()
         
         self.index_path = os.path.join(self.persist_dir, "faiss.index")
@@ -197,4 +200,3 @@ class SyllabusMemory:
             return results
         except Exception:
             return []
-

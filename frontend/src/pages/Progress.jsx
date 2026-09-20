@@ -254,7 +254,7 @@ export default function Progress({ studentId, studentProfile, setMode }) {
             </h1>
           </div>
           <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>
-            Multi-topic analytics, test progression curves, diagnostic insights, and scheduled study agenda for <strong style={{ color: '#5eead4' }}>{studentProfile?.name || studentId}</strong>
+            Multi-topic analytics, test progression curves, diagnostic insights, and scheduled study agenda for <strong style={{ color: '#5eead4' }}>{studentProfile?.name || 'your account'}</strong>
           </p>
         </div>
 
