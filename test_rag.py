@@ -29,14 +29,14 @@ def main():
     # Diagnostic Agent Integration
     # ---------------------------------------------------------
     load_dotenv()
-    api_key = os.getenv("NVIDIA_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key or api_key == "your_nvidia_nim_api_key_here":
-        print("No NVIDIA API key found. Skipping DiagnosticAgent portion of the test.")
+        print("No OpenRouter API key found. Skipping DiagnosticAgent portion of the test.")
         return
 
-    print("Connecting to NVIDIA NIM...")
+    print("Connecting to OpenRouter...")
     client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
+        base_url="https://openrouter.ai/api/v1",
         api_key=api_key
     )
     

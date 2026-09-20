@@ -6,11 +6,11 @@ from backend.agents.adaptive_strategy import AdaptiveStrategyAgent
 load_dotenv()
 
 def test_adaptive_strategy():
-    api_key = os.getenv("NVIDIA_API_KEY")
-    base_url = "https://integrate.api.nvidia.com/v1"
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    base_url = "https://openrouter.ai/api/v1"
     
     if not api_key:
-        print("Error: NVIDIA_API_KEY is not set in environment variables or .env file.")
+        print("Error: OPENROUTER_API_KEY is not set in environment variables or .env file.")
         return
 
     client = OpenAI(

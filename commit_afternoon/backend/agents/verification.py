@@ -51,7 +51,7 @@ class VerificationAgent:
             f"PREVIOUS QUESTIONS ASKED:\n{json.dumps(previous_question_ids)}\n"
         )
 
-        model_name = os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
+        model_name = os.environ.get("SLICE_MODEL", "inclusionai/ling-3.0-flash")
 
         try:
             response = self.llm.chat.completions.create(
@@ -65,7 +65,7 @@ class VerificationAgent:
                 stream=False
             )
         except Exception as e:
-            raise RuntimeError(f"NVIDIA API failure during verification generation: {e}")
+            raise RuntimeError(f"OpenRouter API failure during verification generation: {e}")
 
         try:
             content = response.choices[0].message.content

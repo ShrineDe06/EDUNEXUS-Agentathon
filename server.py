@@ -65,7 +65,7 @@ class LLMWrapper:
         self.client = client
         self.chat = client.chat
         self.model_name = model_name
-        self.fallback_models = fallback_models or ["nvidia/nemotron-3-super-120b-a12b", "mistralai/mistral-nemotron"]
+        self.fallback_models = fallback_models or []
 
     def invoke(self, prompt: str) -> str:
         models = [self.model_name] + [m for m in self.fallback_models if m != self.model_name]
@@ -88,22 +88,34 @@ class LLMWrapper:
                     err_text = str(e).lower()
                     if any(k in err_text for k in ["502", "503", "504", "429", "bad gateway", "timeout", "connection"]):
                         wait = 0.8 * (1.5 ** attempt)
-                        logger.warning("NVIDIA model %s transient error (attempt %d/2): %s. Switching/retrying...", model, attempt + 1, e)
+                        logger.warning("OpenRouter model %s transient error (attempt %d/2): %s. Switching/retrying...", model, attempt + 1, e)
                         time.sleep(wait)
                     else:
-                        logger.warning("NVIDIA model %s failed with non-transient error: %s. Trying fallback...", model, e)
+                        logger.warning("OpenRouter model %s failed with non-transient error: %s. Trying fallback...", model, e)
                         break
 
         logger.error("All models and retries exhausted. Last error: %s", last_error)
-        raise RuntimeError(f"NVIDIA API unavailable after retries: {last_error}")
+        raise RuntimeError(f"OpenRouter API unavailable after retries: {last_error}")
 
 def get_llm():
-    api_key = os.getenv("NVIDIA_API_KEY") or os.getenv("OPENAI_API_KEY", "mock-key")
-    model_name = os.getenv("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
-    base_url = "https://integrate.api.nvidia.com/v1" if os.getenv("NVIDIA_API_KEY") else None
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENROUTER_API_KEY is required. Copy .env.example to .env and add your key.")
 
-    client = OpenAI(base_url=base_url, api_key=api_key, max_retries=1, timeout=60.0)
-    return LLMWrapper(client, model_name)
+    model_name = os.getenv("SLICE_MODEL", "inclusionai/ling-3.0-flash")
+    fallback_models = [
+        model for model in (
+            os.getenv("SLICE_FALLBACK_MODEL", "mistralai/mistral-small-3.2-24b-instruct"),
+            os.getenv("SLICE_ESCALATION_MODEL", "anthropic/claude-haiku-4.5"),
+        ) if model and model != model_name
+    ]
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+        max_retries=1,
+        timeout=60.0,
+    )
+    return LLMWrapper(client, model_name, fallback_models)
 
 llm = get_llm()
 

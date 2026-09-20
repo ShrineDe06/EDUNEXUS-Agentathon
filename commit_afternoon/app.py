@@ -90,13 +90,13 @@ st.markdown("""
 @st.cache_resource
 def get_services():
     load_dotenv()
-    api_key = os.getenv("NVIDIA_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
-        st.error("NVIDIA_API_KEY environment variable is missing!")
+        st.error("OPENROUTER_API_KEY environment variable is missing!")
         st.stop()
         
     client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
+        base_url="https://openrouter.ai/api/v1",
         api_key=api_key
     )
     
@@ -114,7 +114,7 @@ client, learner_memory, syllabus_memory, workflow = get_services()
 # Sidebar configuration
 with st.sidebar:
     st.markdown("### 🎓 EDUNEXUS Dashboard")
-    st.info("System Engine: NVIDIA NIM + LangGraph")
+    st.info("System Engine: OpenRouter + LangGraph")
     
     student_id = st.text_input("Learner Student ID", value="student_demo_ui")
     learner_memory.create_student(student_id)

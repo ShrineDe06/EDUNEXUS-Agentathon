@@ -11,14 +11,14 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 def main():
     load_dotenv()
-    api_key = os.getenv("NVIDIA_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
-        print("Error: NVIDIA_API_KEY is not set.")
+        print("Error: OPENROUTER_API_KEY is not set.")
         return
 
-    print("Connecting to NVIDIA NIM...")
+    print("Connecting to OpenRouter...")
     client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
+        base_url="https://openrouter.ai/api/v1",
         api_key=api_key
     )
 

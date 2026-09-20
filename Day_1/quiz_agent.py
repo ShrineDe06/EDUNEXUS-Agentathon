@@ -33,9 +33,9 @@ class StudentQuizAgent:
     ):
         self.topic = topic.lower()
         self.use_llm = use_llm
-        self.llm_api_key = llm_api_key or os.getenv("OPENAI_API_KEY") or os.getenv("LLM_API_KEY")
-        self.llm_model = llm_model or os.getenv("OPENAI_MODEL") or os.getenv("LLM_MODEL") or "gpt-4o-mini"
-        self.llm_base_url = llm_base_url or os.getenv("OPENAI_BASE_URL") or os.getenv("LLM_BASE_URL") or "https://api.openai.com/v1"
+        self.llm_api_key = llm_api_key or os.getenv("OPENROUTER_API_KEY") or os.getenv("LLM_API_KEY")
+        self.llm_model = llm_model or os.getenv("SLICE_MODEL") or os.getenv("LLM_MODEL") or "inclusionai/ling-3.0-flash"
+        self.llm_base_url = llm_base_url or os.getenv("OPENROUTER_BASE_URL") or os.getenv("LLM_BASE_URL") or "https://openrouter.ai/api/v1"
         self.question_bank: Dict[str, List[Question]] = {
             "science": [
                 Question(

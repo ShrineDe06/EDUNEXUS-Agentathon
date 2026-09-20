@@ -26,14 +26,14 @@ python quiz_agent.py --demo --topic math --count 2
 Set an OpenAI-compatible API key and run the quiz with LLM mode enabled:
 
 ```bash
-set OPENAI_API_KEY=your_key_here
+set OPENROUTER_API_KEY=your_key_here
 python quiz_agent.py --topic science --count 3 --llm
 ```
 
 You can also override the model and base URL if needed:
 
 ```bash
-python quiz_agent.py --topic science --count 3 --llm --model gpt-4o-mini --base-url https://api.openai.com/v1
+python quiz_agent.py --topic science --count 3 --llm --model inclusionai/ling-3.0-flash --base-url https://openrouter.ai/api/v1
 ```
 
 If no key is configured, the app falls back to the built-in question bank automatically.

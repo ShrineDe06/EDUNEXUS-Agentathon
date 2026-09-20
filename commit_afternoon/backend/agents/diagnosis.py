@@ -64,7 +64,7 @@ class DiagnosisAgent:
             user_prompt += f"  Correct Answer: {res.get('correct_answer')}\n"
             user_prompt += f"  Result: {status}\n\n"
 
-        model_name = os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
+        model_name = os.environ.get("SLICE_MODEL", "inclusionai/ling-3.0-flash")
 
         try:
             response = self.llm.chat.completions.create(
@@ -78,7 +78,7 @@ class DiagnosisAgent:
                 stream=False
             )
         except Exception as e:
-            raise RuntimeError(f"NVIDIA API failure: {e}")
+            raise RuntimeError(f"OpenRouter API failure: {e}")
 
         try:
             content = response.choices[0].message.content

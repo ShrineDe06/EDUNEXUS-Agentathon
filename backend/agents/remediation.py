@@ -121,7 +121,7 @@ class RemediationAgent:
             user_prompt += f"NEW ADAPTIVE STRATEGY:\n{adaptive_strategy}\n\n"
 
 
-        model_name = os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
+        model_name = os.environ.get("SLICE_MODEL", "inclusionai/ling-3.0-flash")
 
         try:
             response = self.llm.chat.completions.create(
@@ -135,7 +135,7 @@ class RemediationAgent:
                 stream=False
             )
         except Exception as e:
-            raise RuntimeError(f"NVIDIA API failure: {e}")
+            raise RuntimeError(f"OpenRouter API failure: {e}")
 
         try:
             content = response.choices[0].message.content

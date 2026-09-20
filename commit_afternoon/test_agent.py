@@ -7,16 +7,16 @@ def main():
     # Load environment variables from .env
     load_dotenv()
     
-    api_key = os.getenv("NVIDIA_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key or api_key == "your_nvidia_nim_api_key_here":
-        print("Error: NVIDIA_API_KEY not found or not set properly.")
+        print("Error: OPENROUTER_API_KEY not found or not set properly.")
         print("Please create a .env file and add your actual API key.")
         return
 
-    print("Connecting to NVIDIA NIM...")
-    # Initialize the OpenAI client for NVIDIA NIM
+    print("Connecting to OpenRouter...")
+    # OpenRouter exposes an OpenAI-compatible API.
     client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
+        base_url="https://openrouter.ai/api/v1",
         api_key=api_key
     )
 
