@@ -1,12 +1,28 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-manim/
 venv/
 .env
 *.db
 *.db-wal
 *.db-shm
+*.sqlite
+*.sqlite3
 out/
 .pytest_cache/
 .DS_Store
 bakeoff_raw.txt
+.mingit/
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+
+# Uploads & local data
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+backend/data/generated/*
+!backend/data/generated/.gitkeep
+backend/services/ethereal_creds.json

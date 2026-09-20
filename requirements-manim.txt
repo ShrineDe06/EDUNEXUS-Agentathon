@@ -1,0 +1,3 @@
+# Optional high-fidelity animation environment used by backend/media/manim_runtime.py.
+# Install into the project-local .venv-manim environment; the backend auto-detects it.
+manim==0.21.0

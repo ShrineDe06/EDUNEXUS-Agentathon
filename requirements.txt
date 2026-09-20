@@ -7,3 +7,8 @@ fastapi>=0.115         # the expert callback form
 uvicorn>=0.30          # serves it
 # dev
 pytest>=8.0
+streamlit>=1.30.0
+torchvision>=0.16.0
+Pillow>=10.0          # always-available animated lesson fallback
+imageio-ffmpeg>=0.5   # bundled FFmpeg binary for MP4 lessons when Manim is unavailable
+

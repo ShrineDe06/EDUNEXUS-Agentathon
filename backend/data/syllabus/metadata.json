@@ -1,0 +1,212 @@
+[
+  {
+    "text": "Object-Oriented Programming (OOP) in Python\nA small quick-reference guide\n1. What is OOP?\nObject-Oriented Programming is a programming approach that organizes code using classes and\nobjects. It helps combine data and the functions that operate on that data into reusable units.\n2. Class and Object\nA class is a blueprint for creating objects. An object is an instance of a class.\nclass Car:\ndef __init__(self, brand):\nself.brand = brand\ncar1 = Car(\"Toyota\")\nprint(car1.brand)\n3. Constructor: __init__()\nThe __init__() method is a special method that is automatically called when an object is created. It is\ncommonly used to initialize object attributes.\nclass Student:\ndef __init__(self, name, age):\nself.name = name\nself.age = age\n4. The self Keyword\nself refers to the current object. It is used to",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "self.name = name\nself.age = age\n4. The self Keyword\nself refers to the current object. It is used to access attributes and methods belonging to that object.\nclass Person:\ndef greet(self):\nprint(\"Hello\")\np = Person()\np.greet()\n5. Encapsulation\nEncapsulation means keeping data and related methods together and controlling access to internal data.\nPython commonly uses naming conventions such as a single underscore (_) and name mangling with\ndouble underscores (__).\nclass BankAccount:\ndef __init__(self):\nself.__balance = 0\ndef deposit(self, amount):\nself.__balance += amount\n6. Inheritance\nInheritance allows a child class to reuse attributes and methods from a parent class.\nclass Vehicle:\ndef move(self):\n",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "(self):\n",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "print(\"Moving\")\nclass Car(Vehicle):\npass\nc = Car()\nc.move()\n7. Polymorphism\nPolymorphism allows the same method name or interface to behave differently for different objects.\nclass Dog:\ndef sound(self):\nprint(\"Bark\")\nclass Cat:\ndef sound(self):\nprint(\"Meow\")\n8. Abstraction\nAbstraction hides implementation details and exposes only the essential interface. Python provides the\nabc module for defining abstract base classes.\nfrom abc import ABC, abstractmethod\nclass Shape(ABC):\n@abstractmethod\ndef area(self):\npass\n9. Four Main OOP Concepts\nConcept\nMeaning\nEncapsulation\nBundle data and methods; control access\nInheritance\nReuse features from an existing class\nPolymorphism\nSame interface, different behavior\nAbstraction\nHide implementation details\n10. Important Points to Remember\n• Class = blueprin",
+    "page": 2,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "behavior\nAbstraction\nHide implementation details\n10. Important Points to Remember\n• Class = blueprint; Object = instance of a class.\n• __init__() is commonly used as a constructor/initializer.\n• self refers to the current object.\n• Inheritance promotes code reuse.\n• Polymorphism allows different implementations through a common interface.\n• Abstraction focuses on what an object does rather than how it does it.\n",
+    "page": 2,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "Object-Oriented Programming (OOP) in Python\nA small quick-reference guide\n1. What is OOP?\nObject-Oriented Programming is a programming approach that organizes code using classes and\nobjects. It helps combine data and the functions that operate on that data into reusable units.\n2. Class and Object\nA class is a blueprint for creating objects. An object is an instance of a class.\nclass Car:\ndef __init__(self, brand):\nself.brand = brand\ncar1 = Car(\"Toyota\")\nprint(car1.brand)\n3. Constructor: __init__()\nThe __init__() method is a special method that is automatically called when an object is created. It is\ncommonly used to initialize object attributes.\nclass Student:\ndef __init__(self, name, age):\nself.name = name\nself.age = age\n4. The self Keyword\nself refers to the current object. It is used to",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "self.name = name\nself.age = age\n4. The self Keyword\nself refers to the current object. It is used to access attributes and methods belonging to that object.\nclass Person:\ndef greet(self):\nprint(\"Hello\")\np = Person()\np.greet()\n5. Encapsulation\nEncapsulation means keeping data and related methods together and controlling access to internal data.\nPython commonly uses naming conventions such as a single underscore (_) and name mangling with\ndouble underscores (__).\nclass BankAccount:\ndef __init__(self):\nself.__balance = 0\ndef deposit(self, amount):\nself.__balance += amount\n6. Inheritance\nInheritance allows a child class to reuse attributes and methods from a parent class.\nclass Vehicle:\ndef move(self):\n",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "(self):\n",
+    "page": 1,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "print(\"Moving\")\nclass Car(Vehicle):\npass\nc = Car()\nc.move()\n7. Polymorphism\nPolymorphism allows the same method name or interface to behave differently for different objects.\nclass Dog:\ndef sound(self):\nprint(\"Bark\")\nclass Cat:\ndef sound(self):\nprint(\"Meow\")\n8. Abstraction\nAbstraction hides implementation details and exposes only the essential interface. Python provides the\nabc module for defining abstract base classes.\nfrom abc import ABC, abstractmethod\nclass Shape(ABC):\n@abstractmethod\ndef area(self):\npass\n9. Four Main OOP Concepts\nConcept\nMeaning\nEncapsulation\nBundle data and methods; control access\nInheritance\nReuse features from an existing class\nPolymorphism\nSame interface, different behavior\nAbstraction\nHide implementation details\n10. Important Points to Remember\n• Class = blueprin",
+    "page": 2,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "behavior\nAbstraction\nHide implementation details\n10. Important Points to Remember\n• Class = blueprint; Object = instance of a class.\n• __init__() is commonly used as a constructor/initializer.\n• self refers to the current object.\n• Inheritance promotes code reuse.\n• Polymorphism allows different implementations through a common interface.\n• Abstraction focuses on what an object does rather than how it does it.\n",
+    "page": 2,
+    "document": "lesson.pdf"
+  },
+  {
+    "text": "Dummy Technical Document | Working of Diesel Engine \nWORKING OF A DIESEL ENGINE \nA Dummy Technical Document \n \nPrepared for: Mechanical Engineering Study \nTopic: Compression-Ignition (CI) Engine \n1. Introduction \nA diesel engine is an internal combustion engine in which fuel is ignited primarily by the high temperature \nof compressed air. Unlike a conventional spark-ignition petrol engine, a diesel engine does not normally \nuse a spark plug for ignition. Air is compressed to a high pressure and temperature, and diesel fuel is \ninjected near the end of the compression stroke. \n2. Basic Principle \nThe operating principle of a four-stroke diesel engine is based on the compression-ignition cycle. During \noperation, the piston moves between Top Dead Centre (TDC) and Bottom Dead Centre (BDC). Th",
+    "page": 1,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": ". During \noperation, the piston moves between Top Dead Centre (TDC) and Bottom Dead Centre (BDC). The four \nmain strokes are suction, compression, power, and exhaust. \n3. Main Components \nComponent \nFunction \nCylinder \nProvides the space in which the air-fuel \ncombustion process takes place. \nPiston \nMoves inside the cylinder and converts gas \npressure into mechanical motion. \nConnecting Rod \nConnects the piston to the crankshaft and \ntransmits force. \nCrankshaft \nConverts the reciprocating motion of the piston into \nrotary motion. \nCylinder Head \nContains the valves, injector and combustion \nchamber components. \nInlet Valve \nAllows fresh air to enter the cylinder. \nExhaust Valve \nAllows combustion gases to leave the cylinder. \nFuel Injector \nAtomizes and injects diesel fuel into the hot \n",
+    "page": 1,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "bustion gases to leave the cylinder. \nFuel Injector \nAtomizes and injects diesel fuel into the hot \ncompressed air. \nFuel Injection Pump/Rail \nSupplies fuel to the injector at the required \npressure. \nFlywheel \nStores rotational energy and helps maintain \nsmooth crankshaft rotation. \n4. Four-Stroke Working Cycle \n4.1 Suction / Intake Stroke \nThe piston moves from TDC to BDC. The inlet valve is open and the exhaust valve is closed. Only air is \ndrawn into the cylinder in a typical diesel engine. Near the end of this stroke, the cylinder contains the air \nrequired for the next cycle. \n",
+    "page": 1,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "Dummy Technical Document | Working of Diesel Engine \n4.2 Compression Stroke \nThe piston moves from BDC to TDC with both valves closed. The trapped air is compressed to a high \npressure. Compression raises the air temperature substantially, creating conditions suitable for self-ignition \nof the injected diesel fuel. \n4.3 Power / Expansion Stroke \nNear the end of the compression stroke, diesel fuel is injected into the hot compressed air. The fuel \natomizes, mixes with air and ignites. Rapid combustion increases cylinder pressure, forcing the piston \ndownward from TDC toward BDC. This is the main power-producing stroke. \n4.4 Exhaust Stroke \nThe exhaust valve opens and the piston moves from BDC to TDC. Burnt gases are pushed out of the \ncylinder through the exhaust valve. The cycle is then re",
+    "page": 2,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": " to TDC. Burnt gases are pushed out of the \ncylinder through the exhaust valve. The cycle is then ready to begin again. \n5. Simplified Sequence \nIntake → Compression → Fuel Injection & Combustion → Expansion → Exhaust \n6. Important Terms \nTerm \nMeaning \nTDC \nTop Dead Centre: the highest position reached by \nthe piston. \nBDC \nBottom Dead Centre: the lowest position reached \nby the piston. \nCompression Ratio \nRatio of cylinder volume at BDC to the clearance \nvolume at TDC. \nInjection Timing \nCrank-angle position at which fuel injection begins. \nIgnition Delay \nShort interval between the start of fuel injection \nand the start of noticeable combustion. \nMean Effective Pressure \nA calculated average pressure used to relate \nengine work to displacement volume. \n7. Why Compression Ignition Works ",
+    "page": 2,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "age pressure used to relate \nengine work to displacement volume. \n7. Why Compression Ignition Works \nA diesel engine compresses air to a much higher pressure ratio than is normally used in a spark-ignition \nengine. According to the ideal-gas relationship, compressing air raises its temperature. When finely \natomized diesel fuel is injected into this hot air, the fuel can ignite after a short ignition-delay period. The \nresulting combustion produces high-pressure gases that act on the piston. \n8. Four-Stroke Cycle: Typical Valve and Piston Positions \nStroke \nPiston Motion \nInlet Valve \nExhaust Valve \nIntake \nTDC → BDC \nOpen \nClosed \nCompression \nBDC → TDC \nClosed \nClosed \nPower \nTDC → BDC \nClosed \nClosed \nExhaust \nBDC → TDC \nClosed \nOpen \n",
+    "page": 2,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "osed \nClosed \nExhaust \nBDC → TDC \nClosed \nOpen \n",
+    "page": 2,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "Dummy Technical Document | Working of Diesel Engine \n9. Advantages of Diesel Engines \n \nGenerally high thermal efficiency. \n \nHigh low-speed torque makes diesel engines suitable for heavy-duty applications. \n \nDiesel fuel has a relatively high energy density. \n \nCompression ignition eliminates the need for a conventional spark plug in the main combustion \nprocess. \n \nCommonly used in trucks, buses, construction equipment, generators, agricultural machinery and \nmarine applications. \n10. Limitations \n \nHigher peak cylinder pressures can require robust engine construction. \n \nFuel-injection systems require precise control and high manufacturing quality. \n \nCombustion noise can be higher in some diesel engine designs. \n \nParticulate matter and nitrogen oxide emissions require effecti",
+    "page": 3,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "r in some diesel engine designs. \n \nParticulate matter and nitrogen oxide emissions require effective combustion control and after-\ntreatment systems. \n \nCold starting may require additional measures such as glow plugs or intake heating in some \napplications. \n11. Applications \nDiesel engines are widely used where durability, fuel efficiency and high torque are important. Typical \napplications include commercial vehicles, buses, tractors, excavators, compressors, diesel-electric \ngenerator sets, locomotives and marine propulsion systems. \n12. Conclusion \nThe four-stroke diesel engine converts the chemical energy of diesel fuel into mechanical work through \ncompression ignition. The piston first draws in air, compresses it to a high temperature, receives an \ninjection of fuel that ignites",
+    "page": 3,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "first draws in air, compresses it to a high temperature, receives an \ninjection of fuel that ignites, and then uses the resulting expansion to produce power. Finally, the exhaust \ngases are expelled so that the cycle can repeat. \n13. Short Viva Questions \n1. Why is a spark plug generally not required in a diesel engine? \nBecause the compressed air reaches a sufficiently high temperature for injected diesel fuel to ignite. \n2. What enters the cylinder during the intake stroke? \nPrimarily air in a conventional diesel engine. \n3. During which stroke is useful power produced? \nThe power or expansion stroke. \n4. What is the function of the fuel injector? \nTo inject and atomize fuel into the compressed hot air at the required timing and quantity. \n",
+    "page": 3,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "essed hot air at the required timing and quantity. \n",
+    "page": 3,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "Dummy Technical Document | Working of Diesel Engine \n5. What converts reciprocating motion into rotary motion? \nThe crankshaft, through the connecting rod mechanism. \n",
+    "page": 4,
+    "document": "Dummy_Document_Working_of_Diesel_Engine.pdf"
+  },
+  {
+    "text": "Basics of Compiler\n1. Introduction to Compilers\nA compiler is a system software program that translates a program written in a high-level programming language\nsuch as C, C++, or Java into a lower-level form that a computer can execute. The source program is analyzed,\ntransformed, optimized, and finally converted into target code.\nCompiler vs. Interpreter\nCompiler\nInterpreter\nTranslates the program before execution.\nTranslates and executes statements during execution.\nUsually produces object/executable code.\nUsually does not produce a separate executable.\nExecution is generally faster after compilation.\nExecution is generally slower due to translation during execution.\nExamples: C, C++ (typical implementations).\nExamples: Python, JavaScript (commonly interpreted/JIT-based environments).\n2. ",
+    "page": 1,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "al implementations).\nExamples: Python, JavaScript (commonly interpreted/JIT-based environments).\n2. Basic Structure of a Compiler\nA compiler can be viewed as a pipeline of analysis and synthesis stages. The front end understands the source\nprogram and creates an internal representation, while the back end uses that representation to generate efficient target\ncode.\nSource Program\n↓\nLexical Analysis\nTokens\nSyntax Analysis\nParse Tree / AST\nSemantic Analysis\nChecked Representation\nIntermediate Code Generation\nIntermediate Representation\nCode Optimization\nOptimized IR\nCode Generation\nTarget Code\n3. Front End and Back End\nFront end: Lexical, syntax, and semantic analysis; it is mainly concerned with understanding the source language and\ndetecting errors.\nBack end: Optimization and target-code ge",
+    "page": 1,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "th understanding the source language and\ndetecting errors.\nBack end: Optimization and target-code generation; it is mainly concerned with producing efficient code for a particular\ntarget machine or architecture.\n",
+    "page": 1,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "Major Phases of Compilation\n1. Lexical Analysis\nLexical analysis is the first major phase. The lexical analyzer (lexer) reads the source program character by character\nand groups characters into meaningful units called tokens. Whitespace and comments are generally removed at this\nstage.\nExample: For sum = a + 10;, tokens include identifier sum, assignment operator =, identifier a, plus operator +,\ninteger literal 10, and semicolon.\n2. Syntax Analysis\nSyntax analysis, or parsing, checks whether the sequence of tokens follows the grammar of the programming\nlanguage. The parser builds a parse tree or a simplified Abstract Syntax Tree (AST).\nExample: Expression a + b * c\nExpression\n   +\n  / \\\n a   *\n    / \\\n   b   c\n3. Semantic Analysis\nSemantic analysis checks the meaning of the program beyon",
+    "page": 2,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "   *\n    / \\\n   b   c\n3. Semantic Analysis\nSemantic analysis checks the meaning of the program beyond its grammatical structure. Typical checks include type\ncompatibility, declaration checking, scope rules, and function argument matching. A symbol table stores information\nabout identifiers such as names, types, scopes, and locations.\n4. Intermediate Code Generation\nThe compiler converts the checked source representation into an intermediate representation (IR). IR provides a\nmachine-independent form that makes optimization and retargeting easier.\nThree-Address Code Example\nSource\nThree-Address Code\nx = a + b * c\nt1 = b * c<br/>t2 = a + t1<br/>x = t2\n5. Code Optimization\nOptimization improves the generated program without changing its intended behavior. Examples include constant\nfolding, de",
+    "page": 2,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": " the generated program without changing its intended behavior. Examples include constant\nfolding, dead-code elimination, common subexpression elimination, and strength reduction. Optimization may\nreduce execution time, memory usage, or code size.\n",
+    "page": 2,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "Code Generation, Errors & Key Concepts\n1. Code Generation\nThe code generator converts the optimized intermediate representation into target code, such as assembly language or\nmachine code. It must consider the target processor's instruction set, registers, addressing modes, and calling\nconventions.\n2. Error Handling\nCompilers detect and report different categories of errors. Good diagnostics identify the location and nature of a problem\nso that the programmer can correct it.\nError Type\nDescription\nExample\nLexical\nInvalid character or token.\nInvalid symbol in an identifier\nSyntax\nViolates language grammar.\nMissing closing parenthesis\nSemantic\nProgram structure is meaningful syntactically but invalid semantically.\nAdding incompatible types\nRuntime\nOccurs while the program executes; not neces",
+    "page": 3,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "invalid semantically.\nAdding incompatible types\nRuntime\nOccurs while the program executes; not necessarily detected by the compiler.\nDivision by zero\n3. Symbol Table\nA symbol table is a central data structure used by many compiler phases. It records information about program entities\nsuch as variables, functions, classes, constants, and their data types or scopes. Efficient symbol-table operations are\nimportant because identifiers are frequently looked up during compilation.\n4. Important Compiler Terms\nTerm\nMeaning\nToken\nA basic lexical unit produced by the lexer.\nParser\nComponent that checks grammatical structure.\nAST\nTree representation of the essential program structure.\nIR\nIntermediate representation used between source analysis and target-code generation.\nOptimization\nTransformation i",
+    "page": 3,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "epresentation used between source analysis and target-code generation.\nOptimization\nTransformation intended to improve code efficiency while preserving behavior.\nTarget Code\nFinal code generated for the target machine or runtime.\n5. Complete Compilation Flow\nSource Code → Lexical Analysis → Syntax Analysis → Semantic Analysis → Intermediate Code → Optimization\n→ Code Generation → Target Code\nSummary\nA compiler translates high-level source code into a form suitable for execution. The core concepts to remember are\ntokens, parsing, semantic checking, symbol tables, intermediate representation, optimization, and code\ngeneration. Understanding these phases provides the foundation for studying compiler design, parsing techniques,\nruntime systems, and language implementation.\n",
+    "page": 3,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "piler design, parsing techniques,\nruntime systems, and language implementation.\n",
+    "page": 3,
+    "document": "eaa04dee-d46a-40e4-bb30-59d83f0e5a05_2e44aa95_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "Basics of Compiler\n1. Introduction to Compilers\nA compiler is a system software program that translates a program written in a high-level programming language\nsuch as C, C++, or Java into a lower-level form that a computer can execute. The source program is analyzed,\ntransformed, optimized, and finally converted into target code.\nCompiler vs. Interpreter\nCompiler\nInterpreter\nTranslates the program before execution.\nTranslates and executes statements during execution.\nUsually produces object/executable code.\nUsually does not produce a separate executable.\nExecution is generally faster after compilation.\nExecution is generally slower due to translation during execution.\nExamples: C, C++ (typical implementations).\nExamples: Python, JavaScript (commonly interpreted/JIT-based environments).\n2. ",
+    "page": 1,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "al implementations).\nExamples: Python, JavaScript (commonly interpreted/JIT-based environments).\n2. Basic Structure of a Compiler\nA compiler can be viewed as a pipeline of analysis and synthesis stages. The front end understands the source\nprogram and creates an internal representation, while the back end uses that representation to generate efficient target\ncode.\nSource Program\n↓\nLexical Analysis\nTokens\nSyntax Analysis\nParse Tree / AST\nSemantic Analysis\nChecked Representation\nIntermediate Code Generation\nIntermediate Representation\nCode Optimization\nOptimized IR\nCode Generation\nTarget Code\n3. Front End and Back End\nFront end: Lexical, syntax, and semantic analysis; it is mainly concerned with understanding the source language and\ndetecting errors.\nBack end: Optimization and target-code ge",
+    "page": 1,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "th understanding the source language and\ndetecting errors.\nBack end: Optimization and target-code generation; it is mainly concerned with producing efficient code for a particular\ntarget machine or architecture.\n",
+    "page": 1,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "Major Phases of Compilation\n1. Lexical Analysis\nLexical analysis is the first major phase. The lexical analyzer (lexer) reads the source program character by character\nand groups characters into meaningful units called tokens. Whitespace and comments are generally removed at this\nstage.\nExample: For sum = a + 10;, tokens include identifier sum, assignment operator =, identifier a, plus operator +,\ninteger literal 10, and semicolon.\n2. Syntax Analysis\nSyntax analysis, or parsing, checks whether the sequence of tokens follows the grammar of the programming\nlanguage. The parser builds a parse tree or a simplified Abstract Syntax Tree (AST).\nExample: Expression a + b * c\nExpression\n   +\n  / \\\n a   *\n    / \\\n   b   c\n3. Semantic Analysis\nSemantic analysis checks the meaning of the program beyon",
+    "page": 2,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "   *\n    / \\\n   b   c\n3. Semantic Analysis\nSemantic analysis checks the meaning of the program beyond its grammatical structure. Typical checks include type\ncompatibility, declaration checking, scope rules, and function argument matching. A symbol table stores information\nabout identifiers such as names, types, scopes, and locations.\n4. Intermediate Code Generation\nThe compiler converts the checked source representation into an intermediate representation (IR). IR provides a\nmachine-independent form that makes optimization and retargeting easier.\nThree-Address Code Example\nSource\nThree-Address Code\nx = a + b * c\nt1 = b * c<br/>t2 = a + t1<br/>x = t2\n5. Code Optimization\nOptimization improves the generated program without changing its intended behavior. Examples include constant\nfolding, de",
+    "page": 2,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": " the generated program without changing its intended behavior. Examples include constant\nfolding, dead-code elimination, common subexpression elimination, and strength reduction. Optimization may\nreduce execution time, memory usage, or code size.\n",
+    "page": 2,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "Code Generation, Errors & Key Concepts\n1. Code Generation\nThe code generator converts the optimized intermediate representation into target code, such as assembly language or\nmachine code. It must consider the target processor's instruction set, registers, addressing modes, and calling\nconventions.\n2. Error Handling\nCompilers detect and report different categories of errors. Good diagnostics identify the location and nature of a problem\nso that the programmer can correct it.\nError Type\nDescription\nExample\nLexical\nInvalid character or token.\nInvalid symbol in an identifier\nSyntax\nViolates language grammar.\nMissing closing parenthesis\nSemantic\nProgram structure is meaningful syntactically but invalid semantically.\nAdding incompatible types\nRuntime\nOccurs while the program executes; not neces",
+    "page": 3,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "invalid semantically.\nAdding incompatible types\nRuntime\nOccurs while the program executes; not necessarily detected by the compiler.\nDivision by zero\n3. Symbol Table\nA symbol table is a central data structure used by many compiler phases. It records information about program entities\nsuch as variables, functions, classes, constants, and their data types or scopes. Efficient symbol-table operations are\nimportant because identifiers are frequently looked up during compilation.\n4. Important Compiler Terms\nTerm\nMeaning\nToken\nA basic lexical unit produced by the lexer.\nParser\nComponent that checks grammatical structure.\nAST\nTree representation of the essential program structure.\nIR\nIntermediate representation used between source analysis and target-code generation.\nOptimization\nTransformation i",
+    "page": 3,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "epresentation used between source analysis and target-code generation.\nOptimization\nTransformation intended to improve code efficiency while preserving behavior.\nTarget Code\nFinal code generated for the target machine or runtime.\n5. Complete Compilation Flow\nSource Code → Lexical Analysis → Syntax Analysis → Semantic Analysis → Intermediate Code → Optimization\n→ Code Generation → Target Code\nSummary\nA compiler translates high-level source code into a form suitable for execution. The core concepts to remember are\ntokens, parsing, semantic checking, symbol tables, intermediate representation, optimization, and code\ngeneration. Understanding these phases provides the foundation for studying compiler design, parsing techniques,\nruntime systems, and language implementation.\n",
+    "page": 3,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  },
+  {
+    "text": "piler design, parsing techniques,\nruntime systems, and language implementation.\n",
+    "page": 3,
+    "document": "a75a39ac-b716-4238-a33e-36fe8ef38af9_9d9cad3f_Basics_of_Compiler_3_Pages.pdf"
+  }
+]

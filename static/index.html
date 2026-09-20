@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduNexus — Adaptive Learning Platform</title>
+  <meta name="description" content="EduNexus is an adaptive learning platform with Learn, Revise, and Test modes powered by a 5-agent engine.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg-page: #f8f9fb;
+      --bg-white: #ffffff;
+      --bg-hover: #f1f3f7;
+      --bg-muted: #eef0f4;
+      --border-light: #e2e5eb;
+      --border-medium: #d1d5dc;
+      --text-primary: #1a1d23;
+      --text-secondary: #5f6672;
+      --text-tertiary: #8b919d;
+      --accent-blue: #3366ff;
+      --accent-blue-light: #eef2ff;
+      --accent-blue-hover: #254edb;
+      --accent-green: #12825a;
+      --accent-green-bg: #e9f7f0;
+      --accent-orange: #c4760a;
+      --accent-orange-bg: #fef6e7;
+      --accent-red: #c0392b;
+      --accent-red-bg: #fdecea;
+      --accent-purple: #6e44bd;
+      --accent-purple-bg: #f3eefe;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font-main); background: var(--bg-page); color: var(--text-primary); min-height: 100vh; line-height: 1.55; }
+    button { font-family: inherit; cursor: pointer; }
+    input { font-family: inherit; }
+    #root { min-height: 100vh; }
+
+    /* Cards */
+    .card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .card-interactive {
+      cursor: pointer;
+    }
+    .card-interactive:hover {
+      border-color: var(--border-medium);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--accent-blue);
+      color: #fff; border: none; padding: 10px 22px; border-radius: var(--radius-sm);
+      font-weight: 600; font-size: 0.88rem; transition: all 0.15s ease;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: var(--accent-blue-hover); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      background: var(--bg-white); color: var(--text-primary); border: 1px solid var(--border-medium);
+      padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 500; font-size: 0.88rem;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover { background: var(--bg-hover); }
+
+    /* Badges */
+    .badge {
+      padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .badge-mastered { background: var(--accent-green-bg); color: var(--accent-green); }
+    .badge-revision { background: var(--accent-red-bg); color: var(--accent-red); }
+    .badge-learning { background: var(--accent-blue-light); color: var(--accent-blue); }
+    .badge-info { background: var(--accent-purple-bg); color: var(--accent-purple); }
+
+    /* Thinking trace */
+    .thinking-box {
+      background: var(--bg-muted);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 16px;
+    }
+    .thinking-step {
+      padding-left: 12px;
+      border-left: 3px solid var(--accent-blue);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    /* Inputs */
+    .input-field {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .input-field:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(51,102,255,0.1);
+    }
+    .input-field::placeholder { color: var(--text-tertiary); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+
+    /* Nav pill buttons */
+    .nav-pill {
+      padding: 7px 16px; border-radius: 6px; border: none; font-weight: 500; font-size: 0.85rem;
+      background: transparent; color: var(--text-secondary); transition: all 0.15s ease;
+    }
+    .nav-pill:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-pill.active { background: var(--accent-blue-light); color: var(--accent-blue); }
+
+    /* Radio buttons */
+    .radio-option {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border: 1px solid var(--border-light); border-radius: var(--radius-sm);
+      margin: 6px 0; cursor: pointer; transition: all 0.15s ease;
+      background: var(--bg-white); font-size: 0.9rem;
+    }
+    .radio-option:hover { border-color: var(--accent-blue); background: var(--accent-blue-light); }
+    .radio-option.selected { border-color: var(--accent-blue); background: var(--accent-blue-light); }
+    .radio-option input[type="radio"] { accent-color: var(--accent-blue); width: 16px; height: 16px; }
+
+    /* Chat bubble */
+    .chat-bubble {
+      padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; line-height: 1.6;
+      max-width: 85%; animation: fadeIn 0.2s ease;
+    }
+    .chat-user {
+      align-self: flex-end;
+      background: var(--accent-blue); color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-tutor {
+      align-self: flex-start;
+      background: var(--bg-muted); color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      border-bottom-left-radius: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 6px;
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700;
+    }
+
+    /* Skeleton Shimmer Loading Text & Bar */
+    .skeleton-loading-container {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 140px;
+    }
+
+    .thinking-text,
+    .skeleton-shimmer-text {
+      background: linear-gradient(
+        90deg,
+        #888 0%,
+        #888 40%,
+        #fff 50%,
+        #888 60%,
+        #888 100%
+      );
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: shimmer 2s linear infinite;
+      display: inline-block;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    @keyframes shimmer {
+      from {
+        background-position: 200% 0;
+      }
+      to {
+        background-position: -200% 0;
+      }
+    }
+
+    .shimmer-stage-animate {
+      animation: stageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes stageFadeIn {
+      from {
+        opacity: 0.2;
+        transform: translateY(3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Page-enter animation */
+    .page-enter {
+      animation: pageEnter 0.25s ease;
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Markdown formatting in chat */
+    .formatted-markdown { display: flex; flex-direction: column; gap: 6px; }
+    .formatted-markdown p.md-p { margin: 0; line-height: 1.62; }
+    .formatted-markdown strong.md-bold { font-weight: 700; color: var(--text-primary); }
+    .formatted-markdown em.md-italic { font-style: italic; color: var(--text-secondary); }
+    .formatted-markdown .md-h2 { margin: 8px 0 3px; font-size: 1.05rem; font-weight: 750; color: var(--accent-blue); letter-spacing: -0.01em; }
+    .formatted-markdown .md-h3 { margin: 6px 0 2px; font-size: 0.94rem; font-weight: 700; color: var(--accent-purple); }
+    .formatted-markdown code.md-inline-code { padding: 2px 6px; border-radius: 5px; background: rgba(51, 102, 255, 0.08); border: 1px solid rgba(51, 102, 255, 0.2); font-family: monospace; font-size: 0.85em; color: var(--accent-blue); }
+    .formatted-markdown pre.md-pre { margin: 6px 0; padding: 12px 14px; border-radius: 8px; background: #20242c; border: 1px solid var(--border-light); overflow-x: auto; font-family: monospace; font-size: 0.82rem; color: #f1f5f9; line-height: 1.5; }
+    .formatted-markdown ul.md-ul { margin: 4px 0 4px 18px; padding: 0; list-style-type: disc; }
+    .formatted-markdown ol.md-ol { margin: 4px 0 4px 20px; padding: 0; list-style-type: decimal; }
+    .formatted-markdown li.md-list-item { margin-bottom: 4px; line-height: 1.55; }
+    .formatted-markdown .md-spacer { height: 6px; }
+
+    /* Progressive text cursor */
+    .progressive-cursor { display: inline-block; width: 6px; height: 14px; background: var(--accent-blue); margin-left: 3px; vertical-align: middle; border-radius: 1px; animation: cursorBlink 0.75s infinite; }
+    @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ----------------------------------------------------------------
+    // CHAT LOADING INDICATOR (SKELETON SHIMMER & STAGED STATUS)
+    // ----------------------------------------------------------------
+    function ChatLoadingIndicator() {
+      const [stage, setStage] = useState(0);
+      const stages = ["Thinking...", "Preparing...", "Final drafting..."];
+
+      useEffect(() => {
+        const timer1 = setTimeout(() => setStage(1), 2400);
+        const timer2 = setTimeout(() => setStage(2), 5200);
+
+        return () => {
+          clearTimeout(timer1);
+          clearTimeout(timer2);
+        };
+      }, []);
+
+      return (
+        <div className="chat-bubble chat-tutor" style={{ borderLeft: '3px solid var(--accent-blue)', minWidth: '160px' }}>
+          <span key={stage} className="thinking-text shimmer-stage-animate">
+            {stages[stage]}
+          </span>
+        </div>
+      );
+    }
+
+    function parseInline(text) {
+      if (!text) return text;
+      const parts = [];
+      const regex = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+      let lastIndex = 0;
+      let match;
+      let key = 0;
+
+      while ((match = regex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(text.slice(lastIndex, match.index));
+        }
+        const token = match[0];
+        if (token.startsWith('`') && token.endsWith('`')) {
+          parts.push(<code key={key++} className="md-inline-code">{token.slice(1, -1)}</code>);
+        } else if (token.startsWith('**') && token.endsWith('**')) {
+          parts.push(<strong key={key++} className="md-bold">{token.slice(2, -2)}</strong>);
+        } else if (token.startsWith('*') && token.endsWith('*')) {
+          parts.push(<em key={key++} className="md-italic">{token.slice(1, -1)}</em>);
+        }
+        lastIndex = regex.lastIndex;
+      }
+      if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+      }
+      return parts.length > 0 ? parts : text;
+    }
+
+    function FormattedText({ content }) {
+      if (!content) return null;
+      const blocks = [];
+      const lines = content.split('\n');
+      let inCodeBlock = false;
+      let codeBuffer = [];
+      let listBuffer = [];
+      let listType = null;
+      let blockKey = 0;
+
+      const flushList = () => {
+        if (listBuffer.length > 0) {
+          const items = listBuffer.map((item, idx) => (
+            <li key={idx} className="md-list-item">{parseInline(item)}</li>
+          ));
+          if (listType === 'ol') {
+            blocks.push(<ol key={blockKey++} className="md-ol">{items}</ol>);
+          } else {
+            blocks.push(<ul key={blockKey++} className="md-ul">{items}</ul>);
+          }
+          listBuffer = [];
+          listType = null;
+        }
+      };
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.trim().startsWith('```')) {
+          flushList();
+          if (!inCodeBlock) {
+            inCodeBlock = true;
+            codeBuffer = [];
+          } else {
+            inCodeBlock = false;
+            blocks.push(
+              <pre key={blockKey++} className="md-pre">
+                <code className="md-code-block">{codeBuffer.join('\n')}</code>
+              </pre>
+            );
+            codeBuffer = [];
+          }
+          continue;
+        }
+
+        if (inCodeBlock) {
+          codeBuffer.push(line);
+          continue;
+        }
+
+        const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
+        if (headingMatch) {
+          flushList();
+          const level = headingMatch[1].length;
+          const headingText = headingMatch[2];
+          if (level <= 2) {
+            blocks.push(<h3 key={blockKey++} className="md-h2">{parseInline(headingText)}</h3>);
+          } else {
+            blocks.push(<h4 key={blockKey++} className="md-h3">{parseInline(headingText)}</h4>);
+          }
+          continue;
+        }
+
+        const ulMatch = line.match(/^(\*|-)\s+(.+)$/);
+        if (ulMatch) {
+          if (listType !== 'ul') flushList();
+          listType = 'ul';
+          listBuffer.push(ulMatch[2]);
+          continue;
+        }
+
+        const olMatch = line.match(/^(\d+)\.\s+(.+)$/);
+        if (olMatch) {
+          if (listType !== 'ol') flushList();
+          listType = 'ol';
+          listBuffer.push(olMatch[2]);
+          continue;
+        }
+
+        flushList();
+        if (line.trim() === '') {
+          blocks.push(<div key={blockKey++} className="md-spacer" />);
+        } else {
+          blocks.push(<p key={blockKey++} className="md-p">{parseInline(line)}</p>);
+        }
+      }
+
+      flushList();
+      if (inCodeBlock && codeBuffer.length > 0) {
+        blocks.push(
+          <pre key={blockKey++} className="md-pre">
+            <code className="md-code-block">{codeBuffer.join('\n')}</code>
+          </pre>
+        );
+      }
+
+      return <div className="formatted-markdown">{blocks}</div>;
+    }
+
+    function ProgressiveMessageText({ text, isNew = false, onProgress }) {
+      const [displayedLength, setDisplayedLength] = useState(isNew ? 0 : (text ? text.length : 0));
+
+      useEffect(() => {
+        if (!isNew || !text) {
+          setDisplayedLength(text ? text.length : 0);
+          return;
+        }
+
+        const tokens = text.split(/(\s+)/);
+        let index = 0;
+        const chunkSize = 2;
+        const intervalMs = 26;
+
+        const timer = setInterval(() => {
+          index += chunkSize;
+          if (index >= tokens.length) {
+            setDisplayedLength(text.length);
+            clearInterval(timer);
+            onProgress?.();
+          } else {
+            const currentSlice = tokens.slice(0, index).join('');
+            setDisplayedLength(currentSlice.length);
+            onProgress?.();
+          }
+        }, intervalMs);
+
+        return () => clearInterval(timer);
+      }, [text, isNew]);
+
+      const visibleContent = isNew ? text.slice(0, displayedLength) : text;
+      const isTyping = isNew && displayedLength < text.length;
+
+      return (
+        <div className={`message-text ${isTyping ? 'is-streaming' : ''}`}>
+          <FormattedText content={visibleContent} />
+          {isTyping && <span className="progressive-cursor" />}
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // NAVBAR
+    // ----------------------------------------------------------------
+    function Navbar({ currentMode, setMode, studentId, setStudentId, summary }) {
+      return (
+        <nav style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 28px',
+          background: 'var(--bg-white)', borderBottom: '1px solid var(--border-light)',
+          position: 'sticky', top: 0, zIndex: 100
+        }}>
+          <div onClick={() => setMode('home')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              width: '34px', height: '34px', borderRadius: '8px',
+              background: 'var(--accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontWeight: 800, fontSize: '0.95rem'
+            }}>E</div>
+            <div>
+              <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>EduNexus</span>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Learning Platform</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-muted)', padding: '4px', borderRadius: '8px' }}>
+            <button onClick={() => setMode('home')} className={`nav-pill ${currentMode === 'home' ? 'active' : ''}`}>Home</button>
+            <button onClick={() => setMode('learn')} className={`nav-pill ${currentMode === 'learn' ? 'active' : ''}`}>Learn</button>
+            <button onClick={() => setMode('revise')} className={`nav-pill ${currentMode === 'revise' ? 'active' : ''}`}>Revise</button>
+            <button onClick={() => setMode('test')} className={`nav-pill ${currentMode === 'test' ? 'active' : ''}`}>Test</button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {summary && (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <span className="badge badge-mastered">✓ {summary.mastered_subconcepts_count || 0} Mastered</span>
+                {summary.active_misconceptions_count > 0 && (
+                  <span className="badge badge-revision">! {summary.active_misconceptions_count} Needs work</span>
+                )}
+              </div>
+            )}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              background: 'var(--bg-muted)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem'
+            }}>
+              <span style={{ color: 'var(--text-tertiary)', fontWeight: 500 }}>Learner:</span>
+              <input type="text" value={studentId} onChange={(e) => setStudentId(e.target.value)} style={{
+                background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 600,
+                width: '80px', outline: 'none', fontSize: '0.82rem'
+              }} />
+            </div>
+          </div>
+        </nav>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // VISUALIZER
+    // ----------------------------------------------------------------
+    function Visualizer({ data }) {
+      if (!data || data.type === 'stack_operations') return null;
+      return (
+        <div style={{
+          background: 'var(--bg-white)', border: '1px solid var(--border-light)',
+          borderRadius: 'var(--radius-sm)', padding: '16px', margin: '12px 0'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>Visual: {data.title}</h4>
+            <span className="badge badge-info">Interactive</span>
+          </div>
+          {data.type === 'array_indexing' && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
+              {data.elements.map((el, i) => {
+                const isHi = data.highlight_slice && i >= data.highlight_slice[0] && i < data.highlight_slice[1];
+                return (
+                  <div key={i} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: '4px', fontWeight: 500 }}>idx {i}</div>
+                    <div style={{
+                      width: '40px', height: '40px',
+                      background: isHi ? 'var(--accent-blue-light)' : 'var(--bg-muted)',
+                      border: isHi ? '2px solid var(--accent-blue)' : '1px solid var(--border-light)',
+                      borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 700, fontSize: '0.88rem', color: isHi ? 'var(--accent-blue)' : 'var(--text-primary)'
+                    }}>{el}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {data.explanation && (
+            <div style={{
+              marginTop: '10px', fontSize: '0.82rem', color: 'var(--text-secondary)',
+              background: 'var(--bg-muted)', padding: '8px 12px', borderRadius: '6px'
+            }}>
+              {data.explanation}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // HOME PAGE
+    // ----------------------------------------------------------------
+    function Home({ setMode }) {
+      const modes = [
+        {
+          key: 'learn', title: 'Learn', color: '#3366ff', bgColor: '#eef2ff', iconLetter: 'L',
+          desc: 'Explore new concepts with a tutor grounded in your uploaded learning material.',
+          cta: 'Start learning'
+        },
+        {
+          key: 'revise', title: 'Revise', color: '#6e44bd', bgColor: '#f3eefe', iconLetter: 'R',
+          desc: 'Revisit past topics and strengthen areas that need attention based on your history.',
+          cta: 'Start revision'
+        },
+        {
+          key: 'test', title: 'Test', color: '#c4760a', bgColor: '#fef6e7', iconLetter: 'T',
+          desc: 'Take an adaptive assessment and track your mastery with deterministic scoring.',
+          cta: 'Take a test'
+        }
+      ];
+
+      return (
+        <div className="page-enter" style={{ maxWidth: '860px', margin: '0 auto', padding: '56px 24px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <h1 style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: '12px' }}>
+              Welcome to EduNexus
+            </h1>
+            <p style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>
+              Learn, revise, and test — all in one place. Your progress is saved and your experience adapts to you.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+            {modes.map(m => (
+              <div key={m.key} className="card card-interactive" onClick={() => setMode(m.key)}
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div className="section-icon" style={{
+                    background: m.bgColor, color: m.color, marginBottom: '16px'
+                  }}>{m.iconLetter}</div>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>{m.title}</h2>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{m.desc}</p>
+                </div>
+                <button className="btn-primary" style={{
+                  marginTop: '20px', width: '100%', justifyContent: 'center',
+                  background: m.color
+                }}>{m.cta} →</button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            marginTop: '48px', textAlign: 'center', padding: '20px',
+            background: 'var(--bg-muted)', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: 'var(--text-secondary)'
+          }}>
+            Powered by a 5-agent adaptive engine · Document-grounded tutoring · Learner memory via SQLite · ChromaDB retrieval
+          </div>
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // LEARN PAGE
+    // ----------------------------------------------------------------
+    function Learn({ studentId, onRefresh }) {
+      const [topic, setTopic] = useState('Python Slicing');
+      const [activeDoc, setActiveDoc] = useState(null);
+      const [inputMsg, setInputMsg] = useState('');
+      const [chat, setChat] = useState([
+        { id: 'msg-0', sender: 'tutor', text: "Hello! Ask me any question or upload a document to begin." }
+      ]);
+      const [loading, setLoading] = useState(false);
+      const [streamingId, setStreamingId] = useState(null);
+      const [checkQuiz, setCheckQuiz] = useState(null);
+      const chatEndRef = useRef(null);
+
+      useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [chat, loading]);
+
+      const handleSend = async (e) => {
+        e?.preventDefault();
+        if (!inputMsg.trim() || loading) return;
+        const msg = inputMsg.trim();
+        setInputMsg('');
+        setChat(prev => [...prev, { sender: 'user', text: msg }]);
+        setLoading(true);
+
+        try {
+          const res = await fetch('/api/learn/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: studentId, topic, message: msg, document_name: activeDoc })
+          });
+          const data = await res.json();
+          const newMsgId = `reply-${Date.now()}`;
+          setStreamingId(newMsgId);
+          setChat(prev => [...prev, { id: newMsgId, sender: 'tutor', text: data.response, visualization: data.visualization, isGrounded: data.is_grounded }]);
+          onRefresh?.();
+        } catch (err) {
+          setChat(prev => [...prev, { id: `err-${Date.now()}`, sender: 'tutor', text: `Error: ${err.message}` }]);
+        } finally { setLoading(false); }
+      };
+
+      const handleUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/documents/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (res.ok) {
+          setActiveDoc(data.document_name);
+          setTopic(file.name.replace(/\.[^/.]+$/, ""));
+          setChat(prev => [...prev, { sender: 'tutor', text: `Document "${data.document_name}" uploaded successfully. Queries will now reference this document.` }]);
+        }
+      };
+
+      const handleCheck = async () => {
+        setLoading(true);
+        const res = await fetch('/api/learn/check_understanding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ student_id: studentId, topic, document_name: activeDoc })
+        });
+        const data = await res.json();
+        setCheckQuiz(data.questions);
+        setLoading(false);
+      };
+
+      return (
+        <div className="page-enter" style={{ maxWidth: '820px', margin: '0 auto', padding: '28px 20px' }}>
+          {/* Header */}
+          <div className="card" style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div className="section-header">
+                <div className="section-icon" style={{ background: 'var(--accent-blue-light)', color: 'var(--accent-blue)' }}>L</div>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Learn</h2>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Ask questions or upload a document for grounded tutoring.</p>
+            </div>
+            <label className="btn-secondary" style={{ cursor: 'pointer' }}>
+              Upload document
+              <input type="file" accept=".pdf,.txt" onChange={handleUpload} style={{ display: 'none' }} />
+            </label>
+          </div>
+
+          {/* Topic / Document info bar */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+            <div style={{
+              flex: 1, background: 'var(--bg-white)', border: '1px solid var(--border-light)',
+              padding: '10px 14px', borderRadius: 'var(--radius-sm)'
+            }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Topic</div>
+              <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} style={{
+                background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 600,
+                width: '100%', outline: 'none', fontSize: '0.88rem'
+              }} />
+            </div>
+            <div style={{
+              flex: 1, background: 'var(--bg-white)', border: '1px solid var(--border-light)',
+              padding: '10px 14px', borderRadius: 'var(--radius-sm)'
+            }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Document</div>
+              <div style={{ fontSize: '0.88rem', color: activeDoc ? 'var(--accent-green)' : 'var(--text-tertiary)', fontWeight: activeDoc ? 600 : 400 }}>
+                {activeDoc || 'None — using general knowledge'}
+              </div>
+            </div>
+          </div>
+
+          {/* Chat area */}
+          <div className="card" style={{ minHeight: '420px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
+              {chat.map((msg, i) => (
+                <div key={msg.id || i} className={`chat-bubble ${msg.sender === 'user' ? 'chat-user' : 'chat-tutor'}`}>
+                  {msg.isGrounded && <span className="badge badge-mastered" style={{ marginBottom: '6px' }}>✓ Document grounded</span>}
+                  {msg.sender === 'tutor' ? (
+                    <ProgressiveMessageText
+                      text={msg.text}
+                      isNew={msg.id === streamingId}
+                      onProgress={() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    />
+                  ) : (
+                    <FormattedText content={msg.text} />
+                  )}
+                </div>
+              ))}
+              {loading && <ChatLoadingIndicator />}
+              <div ref={chatEndRef} />
+            </div>
+
+            <form onSubmit={handleSend} style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+              <input type="text" placeholder={`Ask about ${topic}...`} value={inputMsg} onChange={(e) => setInputMsg(e.target.value)}
+                className="input-field" style={{ flex: 1 }} />
+              <button type="submit" className="btn-primary">Send</button>
+              <button type="button" className="btn-secondary" onClick={handleCheck}>Check understanding</button>
+            </form>
+          </div>
+
+          {/* Quiz */}
+          {checkQuiz && (
+            <div className="card" style={{ marginTop: '16px', borderLeft: '3px solid var(--accent-blue)' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>Check Your Understanding</h3>
+              {checkQuiz.map((q, idx) => (
+                <div key={idx} style={{ marginBottom: '14px' }}>
+                  <p style={{ fontWeight: 600, marginBottom: '6px' }}>Q{idx+1}: {q.question}</p>
+                  <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                    {q.options.map((opt, oIdx) => <li key={oIdx} style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', padding: '2px 0' }}>• {opt}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // REVISE PAGE
+    // ----------------------------------------------------------------
+    function Revise({ studentId, onRefresh }) {
+      const [topics, setTopics] = useState([]);
+      const [selectedTopic, setSelectedTopic] = useState(null);
+      const [revData, setRevData] = useState(null);
+      const [answers, setAnswers] = useState({});
+      const [result, setResult] = useState(null);
+
+      useEffect(() => {
+        fetch(`/api/revise/topics/${studentId}`).then(r => r.json()).then(setTopics);
+      }, [studentId]);
+
+      const startRev = async (t) => {
+        setSelectedTopic(t);
+        const res = await fetch('/api/revise/start', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ student_id: studentId, topic: t })
+        });
+        setRevData(await res.json());
+      };
+
+      const submitVerify = async () => {
+        const res = await fetch('/api/revise/verify', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ student_id: studentId, topic: selectedTopic, answers, questions: revData.questions })
+        });
+        setResult(await res.json());
+        onRefresh?.();
+      };
+
+      return (
+        <div className="page-enter" style={{ maxWidth: '820px', margin: '0 auto', padding: '28px 20px' }}>
+          <div className="card" style={{ marginBottom: '16px' }}>
+            <div className="section-header">
+              <div className="section-icon" style={{ background: 'var(--accent-purple-bg)', color: 'var(--accent-purple)' }}>R</div>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Revise</h2>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Targeted revision based on your learning history and past misconceptions.</p>
+          </div>
+
+          {!selectedTopic ? (
+            <div>
+              {topics.length === 0 ? (
+                <div className="card" style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--text-tertiary)' }}>
+                  <p style={{ fontSize: '0.95rem' }}>No topics to revise yet. Start by learning something new!</p>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                  {topics.map((t, idx) => (
+                    <div key={idx} className="card card-interactive" onClick={() => startRev(t.topic)}>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>{t.topic}</h3>
+                      <span className={`badge ${t.status === 'MASTERED' ? 'badge-mastered' : 'badge-revision'}`}>{t.status}</span>
+                      <div style={{ marginTop: '16px', fontSize: '0.82rem', color: 'var(--accent-blue)', fontWeight: 600 }}>Revise →</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button className="btn-secondary" onClick={() => { setSelectedTopic(null); setRevData(null); setResult(null); setAnswers({}); }}
+                style={{ marginBottom: '16px' }}>← Back to topics</button>
+
+              {revData && (
+                <div className="card">
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px' }}>Revising: {selectedTopic}</h3>
+
+                  <div style={{
+                    background: 'var(--bg-muted)', padding: '16px', borderRadius: 'var(--radius-sm)',
+                    margin: '0 0 20px', whiteSpace: 'pre-wrap', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65
+                  }}>
+                    {revData.revision_lesson}
+                  </div>
+
+                  <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>Verification Questions</h4>
+                  {revData.questions.map((q, idx) => (
+                    <div key={idx} style={{ marginBottom: '16px' }}>
+                      <p style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.9rem' }}>Q{idx+1}: {q.question}</p>
+                      {q.options.map((opt, oIdx) => (
+                        <label key={oIdx} className={`radio-option ${answers[q.id] === opt ? 'selected' : ''}`}>
+                          <input type="radio" name={q.id} value={opt}
+                            checked={answers[q.id] === opt}
+                            onChange={() => setAnswers(prev => ({ ...prev, [q.id]: opt }))} />
+                          <span>{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  ))}
+
+                  {!result ? (
+                    <button className="btn-primary" onClick={submitVerify} style={{ marginTop: '8px' }}>Submit answers</button>
+                  ) : (
+                    <div style={{
+                      marginTop: '16px', padding: '14px', borderRadius: 'var(--radius-sm)',
+                      background: 'var(--accent-green-bg)', border: '1px solid rgba(18,130,90,0.2)', fontSize: '0.9rem', color: 'var(--accent-green)'
+                    }}>
+                      {result.message}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // TEST PAGE
+    // ----------------------------------------------------------------
+    function Test({ studentId, onRefresh }) {
+      const [topic, setTopic] = useState('Python Lists');
+      const [quiz, setQuiz] = useState(null);
+      const [answers, setAnswers] = useState({});
+      const [result, setResult] = useState(null);
+      const [loading, setLoading] = useState(false);
+
+      const startTest = async () => {
+        setLoading(true);
+        try {
+          const res = await fetch('/api/test/start', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: studentId, topic })
+          });
+          setQuiz(await res.json());
+        } finally { setLoading(false); }
+      };
+
+      const submitTest = async () => {
+        setLoading(true);
+        try {
+          const res = await fetch('/api/test/submit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: studentId, topic: quiz.topic, attempt_id: quiz.attempt_id, answers, questions: quiz.questions })
+          });
+          setResult(await res.json());
+          onRefresh?.();
+        } finally { setLoading(false); }
+      };
+
+      return (
+        <div className="page-enter" style={{ maxWidth: '820px', margin: '0 auto', padding: '28px 20px' }}>
+          <div className="card" style={{ marginBottom: '16px' }}>
+            <div className="section-header">
+              <div className="section-icon" style={{ background: 'var(--accent-orange-bg)', color: 'var(--accent-orange)' }}>T</div>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Test</h2>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>5-question adaptive assessment with deterministic scoring.</p>
+          </div>
+
+          {!quiz ? (
+            <div className="card">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Topic</label>
+              <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
+                className="input-field" style={{ marginBottom: '16px' }} />
+              <button className="btn-primary" onClick={startTest} disabled={loading}>
+                {loading ? 'Generating...' : 'Generate test'}
+              </button>
+            </div>
+          ) : (
+            <div className="card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{quiz.topic}</h3>
+                <span className="badge badge-learning">{quiz.questions?.length || 5} questions</span>
+              </div>
+
+              {quiz.questions.map((q, idx) => (
+                <div key={idx} style={{
+                  marginBottom: '20px', paddingBottom: '20px',
+                  borderBottom: idx < quiz.questions.length - 1 ? '1px solid var(--border-light)' : 'none'
+                }}>
+                  <p style={{ fontWeight: 600, marginBottom: '4px', fontSize: '0.92rem' }}>
+                    Q{idx+1}
+                    <span style={{ fontWeight: 400, color: 'var(--text-tertiary)', fontSize: '0.78rem', marginLeft: '8px' }}>{q.sub_concept}</span>
+                  </p>
+                  <p style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{q.question}</p>
+                  {q.options.map((opt, oIdx) => (
+                    <label key={oIdx} className={`radio-option ${answers[q.id] === opt ? 'selected' : ''}`}>
+                      <input type="radio" name={q.id} value={opt}
+                        checked={answers[q.id] === opt}
+                        onChange={() => setAnswers(prev => ({ ...prev, [q.id]: opt }))} />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              ))}
+
+              {!result ? (
+                <button className="btn-primary" onClick={submitTest} disabled={loading} style={{ marginTop: '4px' }}>
+                  {loading ? 'Submitting...' : 'Submit test'}
+                </button>
+              ) : (
+                <div style={{ marginTop: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <span className={`badge ${result.status === 'MASTERED' ? 'badge-mastered' : 'badge-revision'}`} style={{ fontSize: '0.85rem', padding: '6px 14px' }}>
+                      {result.status}
+                    </span>
+                    {result.score !== undefined && (
+                      <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Score: {result.score}%</span>
+                    )}
+                  </div>
+
+                  {result.thinking_process && result.thinking_process.length > 0 && (
+                    <div className="thinking-box">
+                      <div style={{ fontWeight: 700, marginBottom: '10px', color: 'var(--text-primary)', fontSize: '0.88rem' }}>Reasoning Trace</div>
+                      {result.thinking_process.map((step, i) => (
+                        <div key={i} className="thinking-step">{step}</div>
+                      ))}
+                    </div>
+                  )}
+
+                  {result.remediation && (
+                    <div style={{
+                      marginTop: '12px', padding: '14px', borderRadius: 'var(--radius-sm)',
+                      background: 'var(--accent-orange-bg)', border: '1px solid rgba(196,118,10,0.2)',
+                      fontSize: '0.88rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.6
+                    }}>
+                      <div style={{ fontWeight: 700, color: 'var(--accent-orange)', marginBottom: '6px' }}>Suggested Remediation</div>
+                      {result.remediation}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ----------------------------------------------------------------
+    // ROOT APP
+    // ----------------------------------------------------------------
+    function App() {
+      const [currentMode, setMode] = useState('home');
+      const [studentId, setStudentId] = useState('student_1');
+      const [summary, setSummary] = useState(null);
+
+      const refreshSummary = () => {
+        fetch(`/api/learner/${studentId}`).then(r => r.json()).then(setSummary).catch(() => {});
+      };
+
+      useEffect(() => { refreshSummary(); }, [studentId]);
+
+      return (
+        <div>
+          <Navbar currentMode={currentMode} setMode={setMode} studentId={studentId} setStudentId={setStudentId} summary={summary} />
+          <main>
+            {currentMode === 'home' && <Home setMode={setMode} />}
+            {currentMode === 'learn' && <Learn studentId={studentId} onRefresh={refreshSummary} />}
+            {currentMode === 'revise' && <Revise studentId={studentId} onRefresh={refreshSummary} />}
+            {currentMode === 'test' && <Test studentId={studentId} onRefresh={refreshSummary} />}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
